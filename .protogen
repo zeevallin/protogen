@@ -1,0 +1,5 @@
+source git@github.com:zeeraw/protogen-protos.git
+language go
+
+generate services/foobar v3.0.0
+generate services/games v1.0.0
