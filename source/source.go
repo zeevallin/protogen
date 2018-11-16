@@ -18,8 +18,12 @@ var (
 
 // Source defines behaviour of the interaction with a proto repository
 type Source interface {
-	Path() string
+	Init() error
+	PathTo(pkg string) string
 
-	Update() error
-	Checkout(tag string) error
+	Checkout(hash string) error
+	HashForRef(ref Ref) (string, error)
+
+	Packages() ([]string, error)
+	PackageVersions(pkg string) ([]string, error)
 }

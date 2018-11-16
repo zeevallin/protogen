@@ -6,13 +6,20 @@ import (
 
 // Config defines the configuration for code generation
 type Config struct {
-	Projects []*Project
+	Packages []*Package
 }
 
-// Project defines a project to generate code for
-type Project struct {
-	Target   string
-	Tag      string
+// Package defines a package to generate code for
+type Package struct {
+	// Name is the full name of the package in the repository
+	Name string
+
+	// Language is the programming language to generate code for
 	Language Language
-	Source   source.Source
+
+	// Source is the repository for protos
+	Source source.Source
+
+	// Ref defines a point in the repository timeline
+	Ref source.Ref
 }

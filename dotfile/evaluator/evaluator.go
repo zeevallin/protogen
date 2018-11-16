@@ -9,61 +9,80 @@ import (
 // New returns a new evaluation instance
 func New() *Evaluator {
 	return &Evaluator{
-		Projects: make([]*config.Project, 0),
+		Packages: make([]*config.Package, 0),
 	}
 }
 
 // Evaluator evaluates a config node
 type Evaluator struct {
-	Projects        []*config.Project
+	Packages        []*config.Package
 	CurrentLanguage config.Language
 	CurrentSource   source.Source
 }
 
 // Eval evaluates a configuration file AST
-func (e *Evaluator) Eval(node *ast.ConfigurationFile) *config.Config {
-	e.eval(node)
-	return &config.Config{
-		Projects: e.Projects,
+func (e *Evaluator) Eval(node *ast.ConfigurationFile) (*config.Config, error) {
+	err := e.eval(node)
+	if err != nil {
+		return nil, err
 	}
+	return &config.Config{
+		Packages: e.Packages,
+	}, nil
 }
 
-func (e *Evaluator) eval(node ast.Node) {
+func (e *Evaluator) eval(node ast.Node) error {
+	var err error
 	switch node := node.(type) {
 	case *ast.ConfigurationFile:
-		e.evalStatements(node.Statements)
+		err = e.evalStatements(node.Statements)
 	case *ast.SourceStatement:
-		e.CurrentSource = e.evalSourceStatement(node)
+		e.CurrentSource, err = e.evalSourceStatement(node)
 	case *ast.LanguageStatement:
 		e.CurrentLanguage = e.evalLanguageStatement(node)
 	case *ast.GenerateStatement:
-		e.Projects = append(e.Projects, e.evalGenerateStatement(node))
+		e.Packages = append(e.Packages, e.evalGenerateStatement(node))
 	}
-	return
+	return err
 }
 
-func (e *Evaluator) evalStatements(stmts []ast.Statement) {
+func (e *Evaluator) evalStatements(stmts []ast.Statement) error {
 	for _, statement := range stmts {
-		e.eval(statement)
+		err := e.eval(statement)
+		if err != nil {
+			return err
+		}
 	}
-	return
+	return nil
 }
 
-func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) source.Source {
-	return &source.RemoteGitSource{
-		URL: stmt.Source.String(),
-	}
+func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) (source.Source, error) {
+	return source.NewRemoteGitSource(stmt.Source.String())
 }
 
 func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.Language {
 	return config.Language(stmt.Name.String())
 }
 
-func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.Project {
-	return &config.Project{
+func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.Package {
+	var ref source.Ref
+	switch t := stmt.Tag.(type) {
+	case *ast.Version:
+		ref = source.Ref{
+			Name: t.String(),
+			Type: source.Version,
+		}
+	default:
+		ref = source.Ref{
+			Name: t.String(),
+			Type: source.Branch,
+		}
+	}
+
+	return &config.Package{
 		Source:   e.CurrentSource,
 		Language: e.CurrentLanguage,
-		Tag:      stmt.Tag.String(),
-		Target:   stmt.Target.String(),
+		Ref:      ref,
+		Name:     stmt.Target.String(),
 	}
 }

@@ -21,9 +21,9 @@ func TestEval(t *testing.T) {
 					Source: &ast.Identifier{
 						Token: token.Token{
 							Type:    token.IDENTIFIER,
-							Literal: "git@github.com:zeeraw/protogen-protos.git",
+							Literal: "github.com/zeeraw/protogen-protos",
 						},
-						Value: "git@github.com:zeeraw/protogen-protos.git",
+						Value: "github.com/zeeraw/protogen-protos",
 					},
 				},
 				&ast.LanguageStatement{
@@ -71,7 +71,8 @@ func TestEval(t *testing.T) {
 		}
 
 		e := evaluator.New()
-		conf := e.Eval(tree)
-		test.AssertEqual(t, 2, len(conf.Projects))
+		conf, err := e.Eval(tree)
+		test.AssertEqual(t, nil, err)
+		test.AssertEqual(t, 2, len(conf.Packages))
 	})
 }
