@@ -23,7 +23,7 @@ import (
 
 const (
 	gitSourceErrFmt        = "cannot create new git source: %v"
-	gitInitErrFmt          = "cannot initialize git source: %v"
+	gitInitErrFmt          = "cannot initialise git source: %v"
 	gitHashForTag          = "cannot get commit hash for package tag %s: %v"
 	gitHashForBranchErrFmt = "could not resolve hash for branch: %v"
 
