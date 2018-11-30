@@ -1,15 +1,16 @@
 package main
 
 import (
-	"context"
+	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"os"
-	"time"
+
+	"github.com/zeeraw/protogen/config"
+	"github.com/zeeraw/protogen/generator"
 
 	"github.com/urfave/cli"
-	"github.com/zeeraw/protogen/dotfile/evaluator"
-	"github.com/zeeraw/protogen/dotfile/lexer"
-	"github.com/zeeraw/protogen/dotfile/parser"
 )
 
 const (
@@ -21,6 +22,8 @@ const (
 
 	// Usage is the description of the tool displayed in the cli help section
 	Usage = "Helps generate and organise your code from .proto files"
+
+	loggerTag = "protogen "
 )
 
 var (
@@ -32,11 +35,14 @@ var (
 
 // Runner holds the configuration for the running context
 type Runner struct {
-	configFilePath *string
+	configFilePath string
+	verbose        bool
 }
 
+var runner *Runner
+
 func main() {
-	runner := &Runner{}
+	runner = &Runner{}
 	app := cli.NewApp()
 	app.Name = Name
 	app.Usage = Usage
@@ -44,39 +50,45 @@ func main() {
 	app.Authors = []cli.Author{authorPhilipV}
 	app.Action = action
 	app.Flags = []cli.Flag{
+
 		cli.StringFlag{
 			Name:        "protogen_file",
 			Usage:       "path to the protogen configuration file for the current project",
-			Destination: runner.configFilePath,
+			Destination: &runner.configFilePath,
 			Value:       "./.protogen",
+			EnvVar:      "PROTOGEN_FILE",
+		},
+		cli.BoolFlag{
+			Name:        "verbose",
+			Usage:       "use this to show more information",
+			Destination: &runner.verbose,
 		},
 	}
 	app.Run(os.Args)
 }
 
 func action(cc *cli.Context) error {
-	_, cancel := makeCtx()
-	defer cancel()
-
-	f, err := ioutil.ReadFile(".protogen")
+	l := logger()
+	cfg, err := ReadConfigFromFilePath(l, runner.configFilePath)
 	if err != nil {
-		panic(err)
+		return err
 	}
-
-	l := lexer.New(f)
-	p := parser.New(l)
-
-	cf, err := p.ParseConfigurationFile()
-	if err != nil {
-		panic(err)
+	cfg.General = &config.General{
+		Verbose: runner.verbose,
 	}
-
-	e := evaluator.New()
-	e.Eval(cf)
-
+	if err := generator.Generate(l, cfg); err != nil {
+		fmt.Println(err)
+		return err
+	}
 	return nil
 }
 
-func makeCtx() (context.Context, context.CancelFunc) {
-	return context.WithTimeout(context.Background(), time.Second*30)
+func logger() *log.Logger {
+	var logdest io.Writer
+	if runner.verbose {
+		logdest = os.Stdout
+	} else {
+		logdest = ioutil.Discard
+	}
+	return log.New(logdest, loggerTag, log.Lshortfile|log.LstdFlags)
 }
