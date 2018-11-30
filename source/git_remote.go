@@ -9,7 +9,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	billy "gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/osfs"
 	"gopkg.in/src-d/go-git.v4"
@@ -151,7 +150,6 @@ func (rgs *RemoteGitSource) hashForBranch(branch string) (string, error) {
 
 	var hash string
 	err = it.ForEach(func(ref *plumbing.Reference) error {
-		spew.Dump(ref.Name().String())
 		b := strings.TrimPrefix(ref.Name().String(), originPrefix)
 
 		if b == branch {

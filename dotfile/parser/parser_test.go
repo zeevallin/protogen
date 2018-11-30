@@ -3,7 +3,6 @@ package parser_test
 import (
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/zeeraw/protogen/dotfile/lexer"
 	"github.com/zeeraw/protogen/dotfile/parser"
 )
@@ -31,7 +30,6 @@ func TestParseConfigurationFile(t *testing.T) {
 		}
 
 		if len(cf.Statements) != 6 {
-			spew.Dump(cf.Statements)
 			t.Fatalf("ast.ConfigurationFile.SourceStatements does not contain 6 statement(s). got=%d", len(cf.Statements))
 		}
 		tests := []struct {

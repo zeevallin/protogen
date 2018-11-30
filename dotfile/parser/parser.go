@@ -3,7 +3,6 @@ package parser
 import (
 	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/zeeraw/protogen/dotfile/ast"
 	"github.com/zeeraw/protogen/dotfile/lexer"
 	"github.com/zeeraw/protogen/dotfile/token"
@@ -40,8 +39,6 @@ func (p *Parser) ParseConfigurationFile() (cf *ast.ConfigurationFile, err error)
 		}
 		p.nextToken()
 	}
-
-	spew.Dump(cf)
 
 	return cf, nil
 }
