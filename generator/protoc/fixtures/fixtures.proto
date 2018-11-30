@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option go_package = "fixtures";
+
+service PingPong {
+    rpc Play(Ping) returns (Pong) {}
+}
+
+message Ping {}
+message Pong {}

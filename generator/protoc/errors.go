@@ -1,0 +1,35 @@
+package protoc
+
+import "fmt"
+
+var (
+	// ErrConfigType happens when the wrong configuration for a language is provided
+	ErrConfigType = fmt.Errorf("protoc language config type invalid")
+)
+
+// ErrUnknownLanguage happens when protoc does not recognise the provided language
+type ErrUnknownLanguage struct {
+	msg interface{}
+}
+
+func (e ErrUnknownLanguage) Error() string {
+	return fmt.Sprintf("protoc does not support language: %v", e.msg)
+}
+
+// ErrFailedProtocExec happens when protoc could not execute
+type ErrFailedProtocExec struct {
+	msg interface{}
+}
+
+func (e ErrFailedProtocExec) Error() string {
+	return fmt.Sprintf("protoc could not execute: %v", e.msg)
+}
+
+// ErrProtocMissing happens when the protoc binary does not exist
+type ErrProtocMissing struct {
+	msg interface{}
+}
+
+func (e ErrProtocMissing) Error() string {
+	return fmt.Sprintf("protoc does not exist: %v", e.msg)
+}
