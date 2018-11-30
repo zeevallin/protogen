@@ -62,5 +62,5 @@ func (p *Package) Prepare() error {
 
 // Path returns the absolute path to the package
 func (p *Package) Path() string {
-	return ""
+	return p.Source.PathTo(p.Name)
 }
