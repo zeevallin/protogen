@@ -45,6 +45,7 @@ func (p *Protoc) buildGo(pkg *config.Package, files ...string) ([]string, error)
 	lang = append(lang, pkg.Output)
 
 	args := []string{}
+	args = append(args, fmt.Sprintf("-I%s", pkg.Source.RootPath()))
 	args = append(args, strings.Join(lang, ""))
 	args = append(args, files...)
 	return args, nil
