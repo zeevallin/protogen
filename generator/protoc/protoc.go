@@ -48,7 +48,7 @@ func (p *Protoc) Run(pkg *config.Package, files ...string) error {
 
 // Exec will run commands against the protoc binary
 func (p *Protoc) Exec(args ...string) error {
-	p.logger.Printf("protoc executing: %s\n", strings.Join(args, ""))
+	p.logger.Printf("protoc executing: %s\n", strings.Join(args, " "))
 	command := exec.Command(p.Binary, args...)
 	command.Dir = p.WorkingDirectory
 
