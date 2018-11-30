@@ -57,7 +57,7 @@ func (p *Package) Prepare() error {
 	if err != nil {
 		return fmt.Errorf(errFmt, err)
 	}
-	return p.Source.Checkout(hash)
+	return nil
 }
 
 // Path returns the absolute path to the package
