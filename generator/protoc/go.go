@@ -21,10 +21,11 @@ func (p *Protoc) runGo(pkg *config.Package, files ...string) error {
 
 func (p *Protoc) buildGo(pkg *config.Package, files ...string) ([]string, error) {
 	p.logger.Println("protoc building go")
-	cfg, ok := pkg.LanguageConfig.(*golang.Config)
+	cfg, ok := pkg.LanguageConfig.(golang.Config)
 	if !ok {
 		return nil, ErrConfigType
 	}
+
 	lang := []string{}
 	lang = append(lang, fmt.Sprintf("%s=", goFlag))
 	var extras = []string{}
