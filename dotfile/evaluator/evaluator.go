@@ -2,6 +2,7 @@ package evaluator
 
 import (
 	"log"
+	"strings"
 
 	"github.com/zeeraw/protogen/config"
 	"github.com/zeeraw/protogen/dotfile/ast"
@@ -79,8 +80,10 @@ func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.P
 	var ref source.Ref
 	switch t := stmt.Tag.(type) {
 	case *ast.Version:
+		strs := []string{stmt.Target.String(), t.String()}
+		tagName := strings.Join(strs, "/")
 		ref = source.Ref{
-			Name: t.String(),
+			Name: tagName,
 			Type: source.Version,
 		}
 	default:

@@ -48,6 +48,7 @@ func (p *Package) Prepare() error {
 	if err != nil {
 		return fmt.Errorf(errFmt, err)
 	}
+
 	hash, err := p.Source.HashForRef(p.Ref)
 	if err != nil {
 		return fmt.Errorf(errFmt, err)
