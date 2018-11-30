@@ -62,6 +62,8 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseSourceStatement()
 	case token.LANGUAGE:
 		return p.parseLanguageStatement()
+	case token.OUTPUT:
+		return p.parseOutputStatement()
 	case token.GENERATE:
 		return p.parseGenerateStatement()
 	default:
@@ -104,6 +106,29 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 	}
 
 	stmt.Name = &ast.Identifier{
+		Token: p.curToken,
+		Value: p.curToken.Literal,
+	}
+
+	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
+		p.nextToken()
+	}
+	return stmt
+}
+
+func (p *Parser) parseOutputStatement() ast.Statement {
+	stmt := &ast.OutputStatement{
+		Token: p.curToken,
+	}
+
+	if !p.expectPeek(token.WHITESPACE) {
+		return nil
+	}
+	if !p.expectPeek(token.IDENTIFIER) {
+		return nil
+	}
+
+	stmt.Path = &ast.Identifier{
 		Token: p.curToken,
 		Value: p.curToken.Literal,
 	}

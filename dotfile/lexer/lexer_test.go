@@ -9,7 +9,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := "source language go bar\nv0.0.1\nsource sourcelanguage js;"
+	input := "source language go output bar\nv0.0.1\nsource sourcelanguage js;"
 	tests := []struct {
 		expectedType    token.Type
 		expectedLiteral string
@@ -19,6 +19,8 @@ func TestNextToken(t *testing.T) {
 		{token.LANGUAGE, "language"},
 		{token.WHITESPACE, " "},
 		{token.IDENTIFIER, "go"},
+		{token.WHITESPACE, " "},
+		{token.OUTPUT, "output"},
 		{token.WHITESPACE, " "},
 		{token.IDENTIFIER, "bar"},
 		{token.NEWLINE, "\n"},

@@ -10,12 +10,13 @@ import (
 
 const (
 	testSource = "github.com/zeeraw/protogen-protos"
+	testOutput = "./vendor/protos"
 	testLang   = "go"
 )
 
 func TestConfigurationFile(t *testing.T) {
 	t.Run("minimally viable configuration file", func(t *testing.T) {
-		expected := "source github.com/zeeraw/protogen-protos\nlanguage go"
+		expected := "source github.com/zeeraw/protogen-protos\nlanguage go\noutput ./vendor/protos"
 		actual := &ast.ConfigurationFile{
 			Statements: []ast.Statement{
 				&ast.SourceStatement{
@@ -38,10 +39,23 @@ func TestConfigurationFile(t *testing.T) {
 					},
 					Name: &ast.Identifier{
 						Token: token.Token{
-							Literal: testSource,
+							Literal: testLang,
 							Type:    token.IDENTIFIER,
 						},
 						Value: testLang,
+					},
+				},
+				&ast.OutputStatement{
+					Token: token.Token{
+						Literal: token.KWOutput,
+						Type:    token.OUTPUT,
+					},
+					Path: &ast.Identifier{
+						Token: token.Token{
+							Literal: testOutput,
+							Type:    token.IDENTIFIER,
+						},
+						Value: testOutput,
 					},
 				},
 			},

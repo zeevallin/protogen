@@ -73,6 +73,16 @@ type LanguageStatement struct {
 func (ls *LanguageStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *LanguageStatement) String() string       { return fmt.Sprintf("%s %s", token.KWLanguage, ls.Name) }
 
+// OutputStatement describes where to generate the protobuffers to
+type OutputStatement struct {
+	Token token.Token // token.LANGUAGE
+	Path  Expression
+}
+
+// TokenLiteral returns the language statement token literal string
+func (ls *OutputStatement) TokenLiteral() string { return ls.Token.Literal }
+func (ls *OutputStatement) String() string       { return fmt.Sprintf("%s %s", token.KWOutput, ls.Path) }
+
 // Identifier describes a value in the configuration
 type Identifier struct {
 	Token token.Token // token.IDENTIFIER

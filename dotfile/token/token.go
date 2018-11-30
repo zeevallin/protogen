@@ -32,6 +32,9 @@ const (
 	// GENERATE defines the keywod for what package to generate
 	GENERATE = "GENERATE"
 
+	// OUTPUT defines the keywod for where to generate packages to
+	OUTPUT = "OUTPUT"
+
 	// Literals
 
 	// VERSION defines a version value
@@ -50,17 +53,26 @@ const (
 )
 
 const (
-	KWSource   = "source"
+	// KWSource is the explicit keyword for source
+	KWSource = "source"
+
+	// KWLanguage is the explicit keyword for language
 	KWLanguage = "language"
+
+	// KWGenerate is the explicit keyword for generate
 	KWGenerate = "generate"
+
+	// KWOutput is the explicit keyword for output
+	KWOutput = "output"
 )
 
 var (
 	// Keywords represent all valid keywords
 	Keywords = map[string]Type{
-		"source":   SOURCE,
-		"language": LANGUAGE,
-		"generate": GENERATE,
+		KWSource:   SOURCE,
+		KWLanguage: LANGUAGE,
+		KWGenerate: GENERATE,
+		KWOutput:   OUTPUT,
 	}
 )
 
