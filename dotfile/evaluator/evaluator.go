@@ -18,6 +18,7 @@ type Evaluator struct {
 	Packages        []*config.Package
 	CurrentLanguage config.Language
 	CurrentSource   source.Source
+	CurrentOutput   string
 }
 
 // Eval evaluates a configuration file AST
@@ -40,6 +41,8 @@ func (e *Evaluator) eval(node ast.Node) error {
 		e.CurrentSource, err = e.evalSourceStatement(node)
 	case *ast.LanguageStatement:
 		e.CurrentLanguage = e.evalLanguageStatement(node)
+	case *ast.OutputStatement:
+		e.CurrentOutput = e.evalOutputStatement(node)
 	case *ast.GenerateStatement:
 		e.Packages = append(e.Packages, e.evalGenerateStatement(node))
 	}
@@ -64,6 +67,10 @@ func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.La
 	return config.Language(stmt.Name.String())
 }
 
+func (e *Evaluator) evalOutputStatement(stmt *ast.OutputStatement) string {
+	return stmt.Path.String()
+}
+
 func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.Package {
 	var ref source.Ref
 	switch t := stmt.Tag.(type) {
@@ -82,6 +89,7 @@ func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.P
 	return &config.Package{
 		Source:   e.CurrentSource,
 		Language: e.CurrentLanguage,
+		Output:   e.CurrentOutput,
 		Ref:      ref,
 		Name:     stmt.Target.String(),
 	}

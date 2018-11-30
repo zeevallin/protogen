@@ -14,6 +14,9 @@ type Package struct {
 	// Name is the full name of the package in the repository
 	Name string
 
+	// Output is the output path on disk
+	Output string
+
 	// Language is the programming language to generate code for
 	Language Language
 
