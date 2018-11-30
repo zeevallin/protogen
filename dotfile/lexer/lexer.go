@@ -1,6 +1,8 @@
 package lexer
 
 import (
+	"log"
+
 	"github.com/zeeraw/protogen/dotfile/token"
 )
 
@@ -10,10 +12,11 @@ type Lexer struct {
 	position     int  // current position in input (points to current char)
 	readPosition int  // current reading position in input (after current char)
 	ch           rune // current char under examination
+	logger       *log.Logger
 }
 
 // New spawns a new lexer using the given input
-func New(input []byte) *Lexer {
+func New(logger *log.Logger, input []byte) *Lexer {
 	l := &Lexer{input: []rune(string(input))}
 	l.readChar()
 	return l

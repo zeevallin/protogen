@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/zeeraw/protogen/dotfile/ast"
 	"github.com/zeeraw/protogen/dotfile/lexer"
@@ -9,10 +10,11 @@ import (
 )
 
 // New prepares and returns a parser for a lexer
-func New(l *lexer.Lexer) *Parser {
+func New(logger *log.Logger, l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l:      l,
 		errors: []string{},
+		logger: logger,
 	}
 	p.nextToken()
 	p.nextToken()
@@ -25,6 +27,7 @@ type Parser struct {
 	errors    []string
 	curToken  token.Token
 	peekToken token.Token
+	logger    *log.Logger
 }
 
 // ParseConfigurationFile will attempt to parse a configuration file

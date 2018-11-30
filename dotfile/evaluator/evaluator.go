@@ -1,15 +1,18 @@
 package evaluator
 
 import (
+	"log"
+
 	"github.com/zeeraw/protogen/config"
 	"github.com/zeeraw/protogen/dotfile/ast"
 	"github.com/zeeraw/protogen/source"
 )
 
 // New returns a new evaluation instance
-func New() *Evaluator {
+func New(logger *log.Logger) *Evaluator {
 	return &Evaluator{
 		Packages: make([]*config.Package, 0),
+		logger:   logger,
 	}
 }
 
@@ -19,6 +22,7 @@ type Evaluator struct {
 	CurrentLanguage config.Language
 	CurrentSource   source.Source
 	CurrentOutput   string
+	logger          *log.Logger
 }
 
 // Eval evaluates a configuration file AST
@@ -60,7 +64,7 @@ func (e *Evaluator) evalStatements(stmts []ast.Statement) error {
 }
 
 func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) (source.Source, error) {
-	return source.NewRemoteGitSource(stmt.Source.String())
+	return source.NewRemoteGitSource(e.logger, stmt.Source.String())
 }
 
 func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.Language {

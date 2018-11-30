@@ -1,6 +1,7 @@
 package evaluator_test
 
 import (
+	"log"
 	"testing"
 
 	"github.com/zeeraw/protogen/dotfile/ast"
@@ -70,7 +71,7 @@ func TestEval(t *testing.T) {
 			},
 		}
 
-		e := evaluator.New()
+		e := evaluator.New(&log.Logger{})
 		conf, err := e.Eval(tree)
 		test.AssertEqual(t, nil, err)
 		test.AssertEqual(t, 2, len(conf.Packages))

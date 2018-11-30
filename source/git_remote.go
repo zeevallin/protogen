@@ -3,6 +3,7 @@ package source
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 	"os/user"
@@ -31,7 +32,7 @@ const (
 )
 
 // NewRemoteGitSource returns a remote git source manager
-func NewRemoteGitSource(u string) (*RemoteGitSource, error) {
+func NewRemoteGitSource(logger *log.Logger, u string) (*RemoteGitSource, error) {
 	url, err := url.Parse(u)
 	if err != nil {
 		return nil, fmt.Errorf(gitSourceErrFmt, err)
@@ -54,6 +55,7 @@ func NewRemoteGitSource(u string) (*RemoteGitSource, error) {
 		repoPath: repoPath,
 		treePath: treePath,
 		storer:   storer,
+		logger:   logger,
 	}, nil
 }
 
@@ -69,6 +71,8 @@ type RemoteGitSource struct {
 	storer storage.Storer
 	repo   *git.Repository
 	wt     *git.Worktree
+
+	logger *log.Logger
 }
 
 // Init initialises the git repository

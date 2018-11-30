@@ -1,6 +1,7 @@
 package parser_test
 
 import (
+	"log"
 	"testing"
 
 	"github.com/zeeraw/protogen/dotfile/lexer"
@@ -18,8 +19,8 @@ func TestParseConfigurationFile(t *testing.T) {
 		generate fizz/buzz master
 		generate furry/trash/can
 		`
-		l := lexer.New([]byte(input))
-		p := parser.New(l)
+		l := lexer.New(&log.Logger{}, []byte(input))
+		p := parser.New(&log.Logger{}, l)
 		cf, err := p.ParseConfigurationFile()
 		if err != nil {
 			panic(err)

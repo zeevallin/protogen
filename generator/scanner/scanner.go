@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"bufio"
+	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -19,15 +20,17 @@ type Scanner struct {
 
 	files   map[string]struct{}
 	scanned map[string]struct{}
+	logger  *log.Logger
 }
 
 // New creates a new scanning instance
-func New() *Scanner {
+func New(logger *log.Logger) *Scanner {
 	return &Scanner{
 		files:   make(map[string]struct{}),
 		scanned: make(map[string]struct{}),
 		GoPkgs:  make(map[string][]string),
 		Pkgs:    make(map[string][]string),
+		logger:  logger,
 	}
 }
 
