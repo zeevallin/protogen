@@ -11,6 +11,7 @@ import (
 const goFlag = "--go_out"
 
 func (p *Protoc) runGo(pkg *config.Package, files ...string) error {
+	p.logger.Println("protoc running go")
 	args, err := p.buildGo(pkg, files...)
 	if err != nil {
 		return err
@@ -19,6 +20,7 @@ func (p *Protoc) runGo(pkg *config.Package, files ...string) error {
 }
 
 func (p *Protoc) buildGo(pkg *config.Package, files ...string) ([]string, error) {
+	p.logger.Println("protoc building go")
 	cfg, ok := pkg.LanguageConfig.(*golang.Config)
 	if !ok {
 		return nil, ErrConfigType

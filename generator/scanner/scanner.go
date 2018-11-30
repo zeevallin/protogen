@@ -43,6 +43,7 @@ type Bundle struct {
 // Scan will take a directory and recursively scan for proto files
 func (s *Scanner) Scan(dict string) []Bundle {
 	files := []string{}
+	s.logger.Printf("scanner scanning: %q\n", dict)
 	filepath.Walk(dict, func(path string, f os.FileInfo, err error) error {
 		if path != dict {
 			if strings.HasSuffix(path, protoFileSuffix) {
