@@ -1,6 +1,7 @@
 package lexer_test
 
 import (
+	"io/ioutil"
 	"log"
 	"testing"
 
@@ -34,7 +35,7 @@ func TestNextToken(t *testing.T) {
 		{token.ILLEGAL, ";"},
 		{token.EOF, ""},
 	}
-	l := lexer.New(&log.Logger{}, []byte(input))
+	l := lexer.New(log.New(ioutil.Discard, "", 0), []byte(input))
 
 	for i, tt := range tests {
 		tok := l.NextToken()

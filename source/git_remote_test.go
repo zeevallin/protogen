@@ -3,6 +3,7 @@
 package source_test
 
 import (
+	"io/ioutil"
 	"log"
 	"testing"
 
@@ -16,7 +17,7 @@ const (
 )
 
 func TestRemoteGitSource(t *testing.T) {
-	src, err := source.NewRemoteGitSource(&log.Logger{}, "github.com/zeeraw/protogen-protos")
+	src, err := source.NewRemoteGitSource(log.New(ioutil.Discard, "", 0), "github.com/zeeraw/protogen-protos")
 	test.AssertEqual(t, nil, err)
 
 	err = src.Init()

@@ -1,6 +1,7 @@
 package parser_test
 
 import (
+	"io/ioutil"
 	"log"
 	"testing"
 
@@ -19,8 +20,8 @@ func TestParseConfigurationFile(t *testing.T) {
 		generate fizz/buzz master
 		generate furry/trash/can
 		`
-		l := lexer.New(&log.Logger{}, []byte(input))
-		p := parser.New(&log.Logger{}, l)
+		l := lexer.New(log.New(ioutil.Discard, "", 0), []byte(input))
+		p := parser.New(log.New(ioutil.Discard, "", 0), l)
 		cf, err := p.ParseConfigurationFile()
 		if err != nil {
 			panic(err)

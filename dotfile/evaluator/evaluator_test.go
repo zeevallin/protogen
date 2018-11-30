@@ -1,6 +1,7 @@
 package evaluator_test
 
 import (
+	"io/ioutil"
 	"log"
 	"testing"
 
@@ -71,7 +72,7 @@ func TestEval(t *testing.T) {
 			},
 		}
 
-		e := evaluator.New(&log.Logger{})
+		e := evaluator.New(log.New(ioutil.Discard, "", 0))
 		conf, err := e.Eval(tree)
 		test.AssertEqual(t, nil, err)
 		test.AssertEqual(t, 2, len(conf.Packages))
