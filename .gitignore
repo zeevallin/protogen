@@ -1,0 +1,3 @@
+generator/protoc/tmp/**/*
+!generator/protoc/tmp/.gitkeep
+
