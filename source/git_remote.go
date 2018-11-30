@@ -107,7 +107,7 @@ func (rgs *RemoteGitSource) Init() (err error) {
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
-	rgs.logger.Println("retrieving work tree from git repo")
+	rgs.logger.Println("retrieving work tree for git repo")
 	rgs.wt, err = rgs.repo.Worktree()
 	return
 }
