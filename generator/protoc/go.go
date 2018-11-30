@@ -37,7 +37,7 @@ func (p *Protoc) buildGo(pkg *config.Package, files ...string) ([]string, error)
 	if cfg.Paths != "" {
 		extras = append(extras, fmt.Sprintf("paths=%s", cfg.Paths))
 	}
-	if len(extras) > 1 {
+	if len(extras) > 0 {
 		lang = append(lang, strings.Join(extras, ","))
 		lang = append(lang, ":")
 	}
