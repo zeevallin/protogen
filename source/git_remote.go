@@ -24,7 +24,7 @@ import (
 const (
 	gitSourceErrFmt        = "cannot create new git source: %v"
 	gitInitErrFmt          = "cannot initialize git source: %v"
-	gitHashForTag          = "cannot get commit hash for package tag: %v"
+	gitHashForTag          = "cannot get commit hash for package tag %s: %v"
 	gitHashForBranchErrFmt = "could not resolve hash for branch: %v"
 
 	defaultScheme = "https"
@@ -33,6 +33,7 @@ const (
 
 // NewRemoteGitSource returns a remote git source manager
 func NewRemoteGitSource(logger *log.Logger, u string) (*RemoteGitSource, error) {
+	logger.Printf("parsing remote git source: %s\n", u)
 	url, err := url.Parse(u)
 	if err != nil {
 		return nil, fmt.Errorf(gitSourceErrFmt, err)
@@ -77,22 +78,28 @@ type RemoteGitSource struct {
 
 // Init initialises the git repository
 func (rgs *RemoteGitSource) Init() (err error) {
+	rgs.logger.Println("initialising remote git tree")
+	rgs.logger.Printf("removing everything at: %s\n", rgs.path)
 	err = os.RemoveAll(rgs.path)
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	rgs.logger.Printf("creating directory for tree: %s\n", rgs.treePath)
 	err = os.MkdirAll(rgs.treePath, 0700)
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	rgs.logger.Printf("creating directory for repo: %s\n", rgs.repoPath)
 	err = os.MkdirAll(rgs.repoPath, 0700)
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	rgs.logger.Println("setting up git configuration")
 	err = rgs.setupGitconfig()
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	rgs.logger.Println("cloning git repository")
 	rgs.repo, err = git.Clone(rgs.storer, rgs.fs, &git.CloneOptions{
 		URL:  rgs.URL,
 		Tags: git.AllTags,
@@ -100,18 +107,19 @@ func (rgs *RemoteGitSource) Init() (err error) {
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	rgs.logger.Println("retrieving work tree from git repo")
 	rgs.wt, err = rgs.repo.Worktree()
 	return
 }
 
 // Checkout checks out a specific hash
 func (rgs *RemoteGitSource) Checkout(hash string) error {
-	rgs.wt.Checkout(&git.CheckoutOptions{
+	rgs.logger.Printf("checking out hash: %s\n", hash)
+	return rgs.wt.Checkout(&git.CheckoutOptions{
 		Create: false,
 		Force:  true,
 		Hash:   plumbing.NewHash(hash),
 	})
-	return nil
 }
 
 // PathTo returns the path to a package on disk
@@ -121,6 +129,7 @@ func (rgs *RemoteGitSource) PathTo(pkg string) string {
 
 // HashForRef derives the
 func (rgs *RemoteGitSource) HashForRef(ref Ref) (string, error) {
+	rgs.logger.Printf("retrieving hash for ref: %s (%v)\n", ref.Name, ref.Type)
 	switch ref.Type {
 	case Version:
 		return rgs.hashForTag(ref.Name)
@@ -173,7 +182,7 @@ func (rgs *RemoteGitSource) hashForBranch(branch string) (string, error) {
 func (rgs *RemoteGitSource) hashForTag(tag string) (string, error) {
 	ref, err := rgs.repo.Tag(tag)
 	if err != nil {
-		return "", fmt.Errorf(gitHashForTag, err)
+		return "", fmt.Errorf(gitHashForTag, tag, err)
 	}
 	return ref.Hash().String(), nil
 }
