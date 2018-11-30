@@ -78,8 +78,20 @@ func isNumber(ch rune) bool {
 	return '0' <= ch && ch <= '9'
 }
 
+func isWhiteSpace(ch rune) bool {
+	return ch == ' ' || ch == '\t' || ch == '\r'
+}
+
+func isNewLine(ch rune) bool {
+	return ch == '\n' || ch == ';'
+}
+
+func isEOF(ch rune) bool {
+	return ch == '\x00'
+}
+
 func isValidRune(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || isNumber(ch) || ch == '_' || ch == '@' || ch == '.' || ch == '/' || ch == ':'
+	return !(isWhiteSpace(ch) || isNewLine(ch) || isEOF(ch))
 }
 
 func newToken(tokenType token.Type, ch rune) token.Token {

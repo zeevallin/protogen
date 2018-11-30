@@ -10,12 +10,14 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := "source language go output bar\nv0.0.1\nsource sourcelanguage js;"
+	input := "source github.com/foo/bar-lol-wat language go output bar\nv0.0.1\nsource sourcelanguage js;"
 	tests := []struct {
 		expectedType    token.Type
 		expectedLiteral string
 	}{
 		{token.SOURCE, "source"},
+		{token.WHITESPACE, " "},
+		{token.IDENTIFIER, "github.com/foo/bar-lol-wat"},
 		{token.WHITESPACE, " "},
 		{token.LANGUAGE, "language"},
 		{token.WHITESPACE, " "},
@@ -40,8 +42,8 @@ func TestNextToken(t *testing.T) {
 	for i, tt := range tests {
 		tok := l.NextToken()
 		if tok.Type != tt.expectedType {
-			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
-				i, tt.expectedType, tok.Type)
+			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q (%q)",
+				i, tt.expectedType, tok.Type, tok.Literal)
 		}
 		if tok.Literal != tt.expectedLiteral {
 			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
