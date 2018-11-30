@@ -19,11 +19,12 @@ func New(logger *log.Logger) *Evaluator {
 
 // Evaluator evaluates a config node
 type Evaluator struct {
-	Packages        []*config.Package
-	CurrentLanguage config.Language
-	CurrentSource   source.Source
-	CurrentOutput   string
-	logger          *log.Logger
+	Packages              []*config.Package
+	CurrentLanguage       config.Language
+	CurrentLanguageConfig interface{}
+	CurrentSource         source.Source
+	CurrentOutput         string
+	logger                *log.Logger
 }
 
 // Eval evaluates a configuration file AST
@@ -46,11 +47,13 @@ func (e *Evaluator) eval(node ast.Node) error {
 		e.CurrentSource, err = e.evalSourceStatement(node)
 	case *ast.LanguageStatement:
 		e.CurrentLanguage = e.evalLanguageStatement(node)
+		e.CurrentLanguageConfig = e.evalLanguageConfigStatement(node)
 	case *ast.OutputStatement:
 		e.CurrentOutput = e.evalOutputStatement(node)
 	case *ast.GenerateStatement:
 		e.Packages = append(e.Packages, e.evalGenerateStatement(node))
 	}
+
 	return err
 }
 
@@ -70,6 +73,10 @@ func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) (source.Sourc
 
 func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.Language {
 	return config.Language(stmt.Name.String())
+}
+
+func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) interface{} {
+	return config.ForLanguage(config.Language(stmt.Name.String()))
 }
 
 func (e *Evaluator) evalOutputStatement(stmt *ast.OutputStatement) string {
@@ -94,10 +101,11 @@ func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.P
 	}
 
 	return &config.Package{
-		Source:   e.CurrentSource,
-		Language: e.CurrentLanguage,
-		Output:   e.CurrentOutput,
-		Ref:      ref,
-		Name:     stmt.Target.String(),
+		Source:         e.CurrentSource,
+		Language:       e.CurrentLanguage,
+		LanguageConfig: e.CurrentLanguageConfig,
+		Output:         e.CurrentOutput,
+		Ref:            ref,
+		Name:           stmt.Target.String(),
 	}
 }
