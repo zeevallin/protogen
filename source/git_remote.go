@@ -124,7 +124,12 @@ func (rgs *RemoteGitSource) Checkout(hash string) error {
 
 // PathTo returns the path to a package on disk
 func (rgs *RemoteGitSource) PathTo(pkg string) string {
-	return path.Join(rgs.repoPath, pkg)
+	return path.Join(rgs.RootPath(), pkg)
+}
+
+// RootPath returns the root path for importing dependent packages
+func (rgs *RemoteGitSource) RootPath() string {
+	return rgs.repoPath
 }
 
 // HashForRef derives the
