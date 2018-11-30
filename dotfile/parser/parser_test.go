@@ -12,7 +12,7 @@ import (
 func TestParseConfigurationFile(t *testing.T) {
 	t.Run("source and language statements", func(t *testing.T) {
 		input := `
-		source git@github.com:zeeraw/protogen.git
+		source github.com/zeeraw/protogen-protos
 		language go
 
 		generate bar v1.0.0
