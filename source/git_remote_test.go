@@ -1,7 +1,8 @@
+// +build integration
+
 package source_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/zeeraw/protogen/source"
@@ -14,10 +15,6 @@ const (
 )
 
 func TestRemoteGitSource(t *testing.T) {
-	if os.Getenv("GIT_TESTS") == "" {
-		t.Skip()
-	}
-
 	src, err := source.NewRemoteGitSource("github.com/zeeraw/protogen-protos")
 	test.AssertEqual(t, nil, err)
 
