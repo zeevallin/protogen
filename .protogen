@@ -1,4 +1,5 @@
-source git@github.com:zeeraw/protogen-protos.git
+source github.com/zeeraw/protogen-protos
+output ./vendor
 language go
 
 generate services/foobar v3.0.0
