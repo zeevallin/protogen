@@ -2,6 +2,7 @@ package generator
 
 import (
 	"log"
+	"os"
 	"strings"
 
 	"github.com/zeeraw/protogen/config"
@@ -44,17 +45,32 @@ func NewGenerator(logger *log.Logger, pkg *config.Package, general *config.Gener
 
 // Run will generate the
 func (g *Generator) Run() error {
+	g.logger.Printf("generator running\n")
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	p := protoc.NewProtoc(g.logger)
+	p.WorkingDirectory = wd
+
+	g.logger.Printf("generator preparing package\n")
 	if err := g.pkg.Prepare(); err != nil {
 		return err
 	}
+
+	g.logger.Printf("generator scanning\n")
 	scanner := scanner.New(g.logger)
 	scanner.Scan(g.pkg.Path())
 
 	switch g.pkg.Language {
 	case config.Go:
+		g.logger.Printf("generator scanned %d go packages\n", len(scanner.GoPkgs))
 		for goPkg, files := range scanner.GoPkgs {
-			g.logger.Printf("generating %s as go package \"%s\" into %s", strings.Join(files, " "), goPkg, g.pkg.Output)
-			if err := protoc.Run(g.pkg, files...); err != nil {
+			for _, f := range files {
+				name := strings.TrimPrefix(f, g.pkg.Source.PathTo(g.pkg.Name))
+				g.logger.Printf("generating %s for go package \"%s\" into %s", name, goPkg, g.pkg.Output)
+			}
+			if err := p.Run(g.pkg, files...); err != nil {
 				return err
 			}
 		}
