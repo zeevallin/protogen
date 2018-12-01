@@ -3,6 +3,8 @@
 package protoc_test
 
 import (
+	"io/ioutil"
+	"log"
 	"os"
 	"testing"
 
@@ -21,7 +23,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(err)
 	}
-	p = protoc.NewProtoc()
+	p = protoc.NewProtoc(log.New(ioutil.Discard, "test", 0))
 	p.WorkingDirectory = wd
 
 	os.Exit(m.Run())
