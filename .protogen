@@ -2,5 +2,5 @@ source github.com/zeeraw/protogen-protos
 output ./vendor
 language go
 
+generate services/games v1.0.1
 generate services/foobar v3.0.0
-generate services/games v1.0.0
