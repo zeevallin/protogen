@@ -9,6 +9,7 @@ import (
 	"os/user"
 	"path"
 	"strings"
+	"sync"
 
 	billy "gopkg.in/src-d/go-billy.v4"
 	"gopkg.in/src-d/go-billy.v4/osfs"
@@ -56,6 +57,7 @@ func NewRemoteGitSource(logger *log.Logger, u string) (*RemoteGitSource, error) 
 		repoPath: repoPath,
 		treePath: treePath,
 		storer:   storer,
+		lock:     &sync.Mutex{},
 		logger:   logger,
 	}, nil
 }
@@ -73,14 +75,43 @@ type RemoteGitSource struct {
 	repo   *git.Repository
 	wt     *git.Worktree
 
+	cloned bool
+	lock   *sync.Mutex
 	logger *log.Logger
 }
 
 // Init initialises the git repository
-func (rgs *RemoteGitSource) Init() (err error) {
-	rgs.logger.Println("initialising remote git tree")
-	rgs.logger.Printf("removing everything at: %s\n", rgs.path)
-	err = os.RemoveAll(rgs.path)
+func (rgs *RemoteGitSource) Init() error {
+	rgs.lock.Lock()
+	defer rgs.lock.Unlock()
+	rgs.logger.Println("initialising remote git source")
+	var err error
+	if !rgs.cloned {
+		rgs.logger.Println("remote git source has not been cloned yet")
+		err = rgs.clone()
+	} else {
+		rgs.logger.Println("remote git source is already cloned")
+		err = rgs.fetch()
+	}
+	return err
+}
+
+func (rgs *RemoteGitSource) fetch() error {
+	rgs.logger.Println("fetching remote git source")
+	err := rgs.repo.Fetch(&git.FetchOptions{
+		Force: true,
+		Tags:  git.AllTags,
+	})
+	switch err.(error) {
+	case git.NoErrAlreadyUpToDate:
+		return nil
+	}
+	return err
+}
+
+func (rgs *RemoteGitSource) clone() error {
+	rgs.logger.Printf("removing directory at: %s\n", rgs.path)
+	err := os.RemoveAll(rgs.path)
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
@@ -107,13 +138,17 @@ func (rgs *RemoteGitSource) Init() (err error) {
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	rgs.cloned = true
 	rgs.logger.Println("retrieving work tree for git repo")
 	rgs.wt, err = rgs.repo.Worktree()
-	return
+	return err
 }
 
 // Checkout checks out a specific hash
 func (rgs *RemoteGitSource) Checkout(hash string) error {
+	rgs.lock.Lock()
+	defer rgs.lock.Unlock()
+
 	rgs.logger.Printf("checking out hash: %s\n", hash)
 	return rgs.wt.Checkout(&git.CheckoutOptions{
 		Create: false,
@@ -134,6 +169,9 @@ func (rgs *RemoteGitSource) RootPath() string {
 
 // HashForRef derives the
 func (rgs *RemoteGitSource) HashForRef(ref Ref) (string, error) {
+	rgs.lock.Lock()
+	defer rgs.lock.Unlock()
+
 	rgs.logger.Printf("retrieving hash for ref: %s (%v)\n", ref.Name, ref.Type)
 	switch ref.Type {
 	case Version:
