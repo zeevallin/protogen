@@ -71,8 +71,8 @@ func (p *Protoc) Exec(args ...string) error {
 	return nil
 }
 
-// Test will check if protoc is installed on your system and give you an error if it isn't
-func (p *Protoc) Test() (string, error) {
+// Check will look if protoc is installed on your system and give you an error if it isn't
+func (p *Protoc) Check() (string, error) {
 	command := exec.Command(p.Binary, versionFlag)
 	out, err := command.Output()
 	if err != nil {
