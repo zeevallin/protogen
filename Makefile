@@ -1,3 +1,5 @@
+GIT_COMMIT=$(shell git rev-list -1 HEAD)
+PROJECT_PATH=github.com/zeeraw/protogen
 
 prepare:
 
@@ -9,3 +11,8 @@ integration: prepare
 
 test: prepare
 	@go test -cover ./...
+
+build: prepare
+	@go build \
+	-o build/protogen \
+	-ldflags "-X $(PROJECT_PATH)/cli.GitCommit=$(GIT_COMMIT)"

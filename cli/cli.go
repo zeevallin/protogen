@@ -29,6 +29,9 @@ const (
 var runner = &Runner{}
 
 var (
+	// GitCommit is the git commit hash of the source-tree during build
+	GitCommit string
+
 	authorPhilipV = cli.Author{
 		Name:  "Philip V. (Zee)",
 		Email: "zee@vall.in",
