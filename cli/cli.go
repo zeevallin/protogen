@@ -26,10 +26,28 @@ const (
 	loggerTag = "protogen "
 )
 
+var runner = &Runner{}
+
 var (
 	authorPhilipV = cli.Author{
 		Name:  "Philip V. (Zee)",
 		Email: "zee@vall.in",
+	}
+	authors = []cli.Author{
+		authorPhilipV,
+	}
+
+	flagVerbose = cli.BoolFlag{
+		Name:        "verbose",
+		Usage:       "use this to show more information",
+		Destination: &runner.verbose,
+	}
+	flagProtogenFile = cli.StringFlag{
+		Name:        "protogen_file",
+		Usage:       "path to the protogen configuration file for the current project",
+		Destination: &runner.configFilePath,
+		Value:       "./.protogen",
+		EnvVar:      "PROTOGEN_FILE",
 	}
 )
 
@@ -39,8 +57,6 @@ type Runner struct {
 	verbose        bool
 }
 
-var runner *Runner
-
 // Run will
 func Run(args []string) error {
 	runner = &Runner{}
@@ -48,21 +64,11 @@ func Run(args []string) error {
 	app.Name = Name
 	app.Usage = Usage
 	app.Version = VERSION
-	app.Authors = []cli.Author{authorPhilipV}
+	app.Authors = authors
 	app.Action = action
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:        "protogen_file",
-			Usage:       "path to the protogen configuration file for the current project",
-			Destination: &runner.configFilePath,
-			Value:       "./.protogen",
-			EnvVar:      "PROTOGEN_FILE",
-		},
-		cli.BoolFlag{
-			Name:        "verbose",
-			Usage:       "use this to show more information",
-			Destination: &runner.verbose,
-		},
+		flagProtogenFile,
+		flagVerbose,
 	}
 	return app.Run(args)
 }
