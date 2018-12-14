@@ -14,8 +14,8 @@ import (
 )
 
 const (
-	// VERSION is the package version
-	VERSION = "0.0.1"
+	// Version is the package version
+	Version = "0.0.1"
 
 	// Name is the name of the command line tool
 	Name = "protogen"
@@ -63,7 +63,7 @@ func Run(args []string) error {
 	app := cli.NewApp()
 	app.Name = Name
 	app.Usage = Usage
-	app.Version = VERSION
+	app.Version = Version
 	app.Authors = authors
 	app.Action = action
 	app.Flags = []cli.Flag{
