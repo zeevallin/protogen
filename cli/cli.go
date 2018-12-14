@@ -63,7 +63,6 @@ func Run(args []string) error {
 		runner.cmdVersion(),
 	}
 	app.Flags = []cli.Flag{
-		runner.flagProtogenFile(),
 		runner.flagVerbose(),
 	}
 	app.Copyright = "Philip V. (Zee) – Apache 2.0"

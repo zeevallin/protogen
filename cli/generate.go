@@ -19,6 +19,9 @@ the relevant files on every release tag you've specified in your
 		Usage:       usage,
 		Description: description,
 		Action:      r.generate,
+		Flags: []cli.Flag{
+			r.flagProtogenFile(),
+		},
 	}
 }
 
