@@ -29,8 +29,8 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestProtoc_Test(t *testing.T) {
-	lib, err := p.Test()
+func TestProtoc_Check(t *testing.T) {
+	lib, err := p.Check()
 	test.AssertEqual(t, nil, err)
 	if len(lib) < 1 {
 		t.Fatalf("lib should be more than 1 character: %s", lib)
