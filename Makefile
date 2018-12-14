@@ -2,10 +2,10 @@
 prepare:
 
 all: prepare
-	go test -cover ./... -tags integration all
+	@go test -cover ./... -tags integration all
 
 integration: prepare
-	go test -cover ./... -tags integration
+	@go test -cover ./... -tags integration
 
 test: prepare
-	go test -cover ./...
+	@go test -cover ./...
