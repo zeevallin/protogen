@@ -17,7 +17,7 @@ func (r *Runner) flagProtogenFile() cli.Flag {
 		Name:        "protogen_file",
 		Usage:       "path to the protogen configuration file for the current project",
 		Destination: &r.protogenFile,
-		Value:       "./.protogen",
+		Value:       ".protogen",
 		EnvVar:      "PROTOGEN_FILE",
 	}
 }
