@@ -2,10 +2,14 @@ package protoc
 
 import "fmt"
 
-var (
-	// ErrConfigType happens when the wrong configuration for a language is provided
-	ErrConfigType = fmt.Errorf("protoc language config type invalid")
-)
+// ErrConfigType happens when the wrong configuration for a language is provided
+type ErrConfigType struct {
+	t interface{}
+}
+
+func (e ErrConfigType) Error() string {
+	return fmt.Sprintf("protoc language config type invalid: %T", e.t)
+}
 
 // ErrUnknownLanguage happens when protoc does not recognise the provided language
 type ErrUnknownLanguage struct {

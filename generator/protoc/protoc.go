@@ -41,7 +41,7 @@ func (p *Protoc) Run(pkg *config.Package, files ...string) error {
 	p.logger.Println("protoc selecting language")
 	switch pkg.Language {
 	case config.Go:
-		return p.runGo(pkg, files...)
+		return p.RunGo(pkg, files...)
 	}
 	return ErrUnknownLanguage{pkg.Language}
 }

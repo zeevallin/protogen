@@ -10,20 +10,22 @@ import (
 
 const goFlag = "--go_out"
 
-func (p *Protoc) runGo(pkg *config.Package, files ...string) error {
+// RunGo will run generation of a package with Go code as the output
+func (p *Protoc) RunGo(pkg *config.Package, files ...string) error {
 	p.logger.Println("protoc running go")
-	args, err := p.buildGo(pkg, files...)
+	args, err := p.BuildGo(pkg, files...)
 	if err != nil {
 		return err
 	}
 	return p.Exec(args...)
 }
 
-func (p *Protoc) buildGo(pkg *config.Package, files ...string) ([]string, error) {
+// BuildGo will construct the protoc command for a package with Go code as the output
+func (p *Protoc) BuildGo(pkg *config.Package, files ...string) ([]string, error) {
 	p.logger.Println("protoc building go")
 	cfg, ok := pkg.LanguageConfig.(golang.Config)
 	if !ok {
-		return nil, ErrConfigType
+		return nil, ErrConfigType{pkg.LanguageConfig}
 	}
 
 	lang := []string{}
