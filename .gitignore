@@ -2,3 +2,4 @@ generator/protoc/tmp/**/*
 !generator/protoc/tmp/.gitkeep
 vendor/
 build/
+protobuf/
