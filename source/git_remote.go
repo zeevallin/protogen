@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/url"
 	"os"
-	"os/user"
 	"path"
 	"strings"
 	"sync"
@@ -16,7 +15,6 @@ import (
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/cache"
-	"gopkg.in/src-d/go-git.v4/plumbing/format/config"
 	"gopkg.in/src-d/go-git.v4/plumbing/storer"
 	"gopkg.in/src-d/go-git.v4/storage"
 	"gopkg.in/src-d/go-git.v4/storage/filesystem"
@@ -125,11 +123,6 @@ func (rgs *RemoteGitSource) clone() error {
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
-	rgs.logger.Println("setting up git configuration")
-	err = rgs.setupGitconfig()
-	if err != nil {
-		return fmt.Errorf(gitInitErrFmt, err)
-	}
 	rgs.logger.Println("cloning git repository")
 	rgs.repo, err = git.Clone(rgs.storer, rgs.fs, &git.CloneOptions{
 		URL:  rgs.URL,
@@ -228,33 +221,4 @@ func (rgs *RemoteGitSource) hashForTag(tag string) (string, error) {
 		return "", fmt.Errorf(gitHashForTag, tag, err)
 	}
 	return ref.Hash().String(), nil
-}
-
-func (rgs *RemoteGitSource) setupGitconfig() (err error) {
-	usr, err := user.Current()
-	if err != nil {
-		return
-	}
-
-	path := path.Join(usr.HomeDir, ".gitconfig")
-	f, err := os.Open(path)
-	if err != nil {
-		return
-	}
-
-	dec := config.NewDecoder(f)
-	gitconfig := &config.Config{}
-	err = dec.Decode(gitconfig)
-	if err != nil {
-		return
-	}
-
-	cfg, err := rgs.storer.Config()
-	if err != nil {
-		return
-	}
-
-	cfg.Raw = gitconfig
-	err = rgs.storer.SetConfig(cfg)
-	return
 }
