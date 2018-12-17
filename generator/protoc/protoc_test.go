@@ -40,14 +40,30 @@ func TestMain(m *testing.M) {
 }
 
 func TestProtoc_Check(t *testing.T) {
-	lib, err := p.Check()
+	ver, err := p.Check()
 	test.AssertEqual(t, nil, err)
-	if len(lib[0]) < 1 {
-		t.Fatalf("lib name be more than 1 character: %s", lib)
+	if len(ver) != 5 {
+		t.Fatalf("version should be 5 characters, was %d: %q", len(ver), ver)
 	}
-	if len(lib[1]) < 1 {
-		t.Fatalf("lib version be more than 1 character: %s", lib)
-	}
+}
+func TestProtoc_CheckExtension(t *testing.T) {
+	t.Run("when the extension is installed", func(t *testing.T) {
+		err := p.CheckExtension("go")
+		test.AssertEqual(t, nil, err)
+	})
+	t.Run("when the extension is not installed", func(t *testing.T) {
+		s := "mumbojumbo"
+		err := p.CheckExtension(s)
+		if err != nil {
+			switch err.(type) {
+			case protoc.ErrExtensionMissing:
+			default:
+				t.Errorf("wrong type of error: %v", err)
+			}
+			return
+		}
+		t.Errorf("check extension with succeeded: %q", s)
+	})
 }
 
 func TestProtoc_Run(t *testing.T) {

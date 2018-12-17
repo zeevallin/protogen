@@ -37,3 +37,13 @@ type ErrProtocMissing struct {
 func (e ErrProtocMissing) Error() string {
 	return fmt.Sprintf("protoc does not exist: %v", e.msg)
 }
+
+// ErrExtensionMissing happens when the protoc extension binary does not exist
+type ErrExtensionMissing struct {
+	lang string
+	msg  interface{}
+}
+
+func (e ErrExtensionMissing) Error() string {
+	return fmt.Sprintf("protoc-gen-%s does not exist: %v", e.lang, e.msg)
+}

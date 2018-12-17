@@ -1,11 +1,13 @@
 package protoc
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/zeeraw/protogen/config"
 )
@@ -71,12 +73,34 @@ func (p *Protoc) Exec(args ...string) error {
 	return nil
 }
 
-// Check will look if protoc is installed on your system and give you an error if it isn't
+// Check will look what protoc version is installed on your system
+// Returns the version or error if it isn't installed
 func (p *Protoc) Check() (string, error) {
 	command := exec.Command(p.Binary, versionFlag)
 	out, err := command.Output()
 	if err != nil {
 		return "", ErrProtocMissing{err}
 	}
-	return string(out), nil
+
+	trimmed := strings.TrimSpace(string(out))
+	tuple := strings.Split(trimmed, " ")
+	return tuple[1], nil
+}
+
+// CheckExtension will look and see if an extension binary is installed
+func (p *Protoc) CheckExtension(lang string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
+	defer cancel()
+
+	binary := fmt.Sprintf("protoc-gen-%s", lang)
+	err := exec.CommandContext(ctx, binary).Run()
+	if err != nil {
+		switch err.(type) {
+		case *exec.ExitError: // ExitError should trigger when the context timeouts
+			return nil
+		default:
+			return ErrExtensionMissing{lang, err}
+		}
+	}
+	return nil
 }
