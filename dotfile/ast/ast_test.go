@@ -12,11 +12,18 @@ const (
 	testSource = "github.com/zeeraw/protogen-protos"
 	testOutput = "./vendor/protos"
 	testLang   = "go"
+
+	testGoPlugin = "grpc"
 )
+
+const expectedMinimallyViable = `source github.com/zeeraw/protogen-protos
+language go {
+	plugin grpc
+}
+output ./vendor/protos`
 
 func TestConfigurationFile(t *testing.T) {
 	t.Run("minimally viable configuration file", func(t *testing.T) {
-		expected := "source github.com/zeeraw/protogen-protos\nlanguage go\noutput ./vendor/protos"
 		actual := &ast.ConfigurationFile{
 			Statements: []ast.Statement{
 				&ast.SourceStatement{
@@ -44,6 +51,24 @@ func TestConfigurationFile(t *testing.T) {
 						},
 						Value: testLang,
 					},
+					Block: &ast.Block{
+						Depth: 1,
+						Statements: []ast.Statement{
+							&ast.GoPluginStatement{
+								Token: token.Token{
+									Literal: token.KWGoPlugin,
+									Type:    token.GOPLUGIN,
+								},
+								Name: &ast.Identifier{
+									Token: token.Token{
+										Literal: testGoPlugin,
+										Type:    token.IDENTIFIER,
+									},
+									Value: testGoPlugin,
+								},
+							},
+						},
+					},
 				},
 				&ast.OutputStatement{
 					Token: token.Token{
@@ -60,6 +85,6 @@ func TestConfigurationFile(t *testing.T) {
 				},
 			},
 		}
-		test.AssertEqual(t, expected, actual.String())
+		test.AssertEqual(t, expectedMinimallyViable, actual.String())
 	})
 }

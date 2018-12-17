@@ -22,6 +22,27 @@ func (cf *ConfigurationFile) String() string {
 	return strings.Join(lines, "\n")
 }
 
+// Block is a sub scope of a statement
+type Block struct {
+	Depth      int
+	Statements []Statement
+}
+
+// TokenLiteral returns the configuration file token literal string
+func (b *Block) TokenLiteral() string { return token.CONFIGURATION }
+func (b *Block) String() string {
+	sb := strings.Builder{}
+	tabs := strings.Repeat("\t", b.Depth)
+	for idx, stmt := range b.Statements {
+		if idx < len(b.Statements)-1 {
+			sb.WriteString(fmt.Sprintf("%s%s\n", tabs, stmt.String()))
+		} else {
+			sb.WriteString(fmt.Sprintf("%s%s", tabs, stmt.String()))
+		}
+	}
+	return sb.String()
+}
+
 // Node is the generic interface every entity has to conform to
 type Node interface {
 	TokenLiteral() string
@@ -67,11 +88,21 @@ func (gs *GenerateStatement) String() string {
 type LanguageStatement struct {
 	Token token.Token // token.LANGUAGE
 	Name  Expression
+	Block *Block
 }
 
 // TokenLiteral returns the language statement token literal string
 func (ls *LanguageStatement) TokenLiteral() string { return ls.Token.Literal }
-func (ls *LanguageStatement) String() string       { return fmt.Sprintf("%s %s", token.KWLanguage, ls.Name) }
+func (ls *LanguageStatement) String() string {
+	if ls.Block == nil {
+		return fmt.Sprintf("%s %s", token.KWLanguage, ls.Name)
+	}
+	b := strings.Builder{}
+	b.WriteString(fmt.Sprintf("%s %s {\n", token.KWLanguage, ls.Name))
+	b.WriteString(ls.Block.String())
+	b.WriteString("\n}")
+	return b.String()
+}
 
 // OutputStatement describes where to generate the protobuffers to
 type OutputStatement struct {
