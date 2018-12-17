@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - "1.11"
+  - "1.11.x"
+  - master
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -y protobuf-compiler
+  - go get -u github.com/golang/protobuf/protoc-gen-go
+
+script: make all
