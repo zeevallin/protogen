@@ -1,14 +1,14 @@
 language: go
 
-go:
-  - "1.11"
-  - "1.11.x"
-  - master
+services:
+  - docker
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install -y autoconf automake libtool curl make g++ unzip
-  - git clone https://github.com/protocolbuffers/protobuf.git && cd protobuf && git submodule update --init --recursive && ./autogen.sh && cd ..
-  - make install
+  - docker build -t protogen-environment:latest .
+  # - sudo apt-get update
+  # - sudo apt-get install -y autoconf automake libtool curl make g++ unzip
+  # - git clone https://github.com/protocolbuffers/protobuf.git && cd protobuf && git submodule update --init --recursive && ./autogen.sh && cd ..
+  # - make install
 
-script: make all
+script:
+  - docker run -v $(pwd):/go/src/github.com/zeeraw/protogen --rm protogen-environment:latest make all 
