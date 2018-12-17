@@ -4,6 +4,8 @@ import (
 	"log"
 	"strings"
 
+	"github.com/zeeraw/protogen/config/go"
+
 	"github.com/zeeraw/protogen/config"
 	"github.com/zeeraw/protogen/dotfile/ast"
 	"github.com/zeeraw/protogen/source"
@@ -47,7 +49,7 @@ func (e *Evaluator) eval(node ast.Node) error {
 		e.CurrentSource, err = e.evalSourceStatement(node)
 	case *ast.LanguageStatement:
 		e.CurrentLanguage = e.evalLanguageStatement(node)
-		e.CurrentLanguageConfig = e.evalLanguageConfigStatement(node)
+		e.CurrentLanguageConfig, err = e.evalLanguageConfigStatement(node)
 	case *ast.OutputStatement:
 		e.CurrentOutput = e.evalOutputStatement(node)
 	case *ast.GenerateStatement:
@@ -75,8 +77,17 @@ func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.La
 	return config.Language(stmt.Name.String())
 }
 
-func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) interface{} {
-	return config.ForLanguage(config.Language(stmt.Name.String()))
+func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (interface{}, error) {
+	lang := config.Language(stmt.Name.String())
+	switch lang {
+	case config.Go:
+		if stmt.Block != nil {
+			return e.evalLanguageGoConfigBlock(stmt.Block)
+		}
+		return golang.Config{}, nil
+	default:
+		return nil, ErrLanguageNotSupported{}
+	}
 }
 
 func (e *Evaluator) evalOutputStatement(stmt *ast.OutputStatement) string {
