@@ -23,9 +23,8 @@ var languages = []config.Language{
 }
 
 func (r *Runner) cmdCheck() cli.Command {
-	const usage = "checks verions of protogen dependencies"
-	const description = `The filesystem will be scanned for all relevant dependencies and return a list
-containing name and version of the dependency.`
+	const usage = "checks versions of protogen dependencies"
+	const description = `Scans the filesystem for all relevant dependencies and returns a list.`
 	return cli.Command{
 		Name:        "check",
 		Usage:       usage,
