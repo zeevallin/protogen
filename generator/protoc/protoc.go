@@ -88,7 +88,7 @@ func (p *Protoc) Check() (string, error) {
 }
 
 // CheckExtension will look and see if an extension binary is installed
-func (p *Protoc) CheckExtension(lang string) error {
+func (p *Protoc) CheckExtension(lang config.Language) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
 	defer cancel()
 

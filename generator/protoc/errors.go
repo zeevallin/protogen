@@ -1,6 +1,10 @@
 package protoc
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/zeeraw/protogen/config"
+)
 
 // ErrConfigType happens when the wrong configuration for a language is provided
 type ErrConfigType struct {
@@ -40,7 +44,7 @@ func (e ErrProtocMissing) Error() string {
 
 // ErrExtensionMissing happens when the protoc extension binary does not exist
 type ErrExtensionMissing struct {
-	lang string
+	lang config.Language
 	msg  interface{}
 }
 
