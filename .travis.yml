@@ -8,6 +8,6 @@ go:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y protobuf-compiler
-  - go get -u github.com/golang/protobuf/protoc-gen-go
+  - make install
 
 script: make all

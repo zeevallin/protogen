@@ -7,8 +7,6 @@ RUN apk add --update \
     protobuf \
     git
 
-RUN go get -u github.com/golang/protobuf/protoc-gen-go && \
-    go get -d -v ./... && \    
-    go install -v ./...
+RUN make install
 
 CMD ["protogen"]

@@ -16,3 +16,8 @@ build: prepare
 	@go build \
 	-o build/protogen \
 	-ldflags "-X $(PROJECT_PATH)/cli.GitCommit=$(GIT_COMMIT)"
+
+install:
+	go get -u github.com/golang/protobuf/protoc-gen-go
+	go get -d -v ./...
+	go install -v ./...
