@@ -50,6 +50,12 @@ const (
 
 	// NEWLINE defines a new line in the file
 	NEWLINE = "NEWLINE"
+
+	// LEFTBRACE defines a left brace "{"
+	LEFTBRACE = "LEFTBRACE"
+
+	// RIGHTBRACE defines a right brace "}"
+	RIGHTBRACE = "RIGHTBRACE"
 )
 
 const (

@@ -10,7 +10,7 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := "source github.com/foo/bar-lol-wat language go output bar\nv0.0.1\nsource sourcelanguage js;"
+	input := "source github.com/foo/bar-lol-wat language go output bar\nv0.0.1\nsource sourcelanguage js;[]{}()"
 	tests := []struct {
 		expectedType    token.Type
 		expectedLiteral string
@@ -35,6 +35,12 @@ func TestNextToken(t *testing.T) {
 		{token.WHITESPACE, " "},
 		{token.IDENTIFIER, "js"},
 		{token.ILLEGAL, ";"},
+		{token.ILLEGAL, "["},
+		{token.ILLEGAL, "]"},
+		{token.LEFTBRACE, "{"},
+		{token.RIGHTBRACE, "}"},
+		{token.ILLEGAL, "("},
+		{token.ILLEGAL, ")"},
 		{token.EOF, ""},
 	}
 	l := lexer.New(log.New(ioutil.Discard, "", 0), []byte(input))

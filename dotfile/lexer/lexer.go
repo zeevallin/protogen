@@ -26,6 +26,10 @@ func New(logger *log.Logger, input []byte) *Lexer {
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	switch l.ch {
+	case '{':
+		tok = newToken(token.LEFTBRACE, l.ch)
+	case '}':
+		tok = newToken(token.RIGHTBRACE, l.ch)
 	case ' ', '\t', '\r':
 		tok = newToken(token.WHITESPACE, l.ch)
 	case '\n':
@@ -90,8 +94,12 @@ func isEOF(ch rune) bool {
 	return ch == '\x00'
 }
 
+func isBracket(ch rune) bool {
+	return ch == '[' || ch == ']' || ch == '(' || ch == ')'
+}
+
 func isValidRune(ch rune) bool {
-	return !(isWhiteSpace(ch) || isNewLine(ch) || isEOF(ch))
+	return !(isWhiteSpace(ch) || isNewLine(ch) || isEOF(ch) || isBracket(ch))
 }
 
 func newToken(tokenType token.Type, ch rune) token.Token {
