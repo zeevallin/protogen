@@ -28,10 +28,22 @@ $ go get -u github.com/zeeraw/protogen
 The protogen workflow is how you should manage your central protobuf repository.
 
 ### The .protogen file
-The protogen file is a definition of what protobuf code should be generated inside a given project.
+[**The .protogen file**](https://github.com/zeeraw/protogen/wiki/Protogen-file) is a definition of what protobuf code should be generated inside a given project. To write the file you use [**the protogen configuration language**](https://github.com/zeeraw/protogen/wiki/Configuration-language).
 
-## Editor Support
-- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=zeeraw.protogen) _(official)_
+```protogen
+source github.com/zeeraw/protogen-protos
+output ./vendor/protos
+language go {
+    plugin grpc
+}
+
+generate services/games v1.0.1
+generate services/foobar v3.0.0
+```
+
+#### Editor support
+We provide protogen file syntax highlighting and snippets for a few different editors.
+- [**Visual Studio Code**](https://marketplace.visualstudio.com/items?itemName=zeeraw.protogen) _(official)_
 
 ## Contributing
 First of all, thanks for thinking about contributing to the protogen project. We think that with a few people helping us make this tool a reality, it will save many people a lof of time and effort when bringing protobuffers into their organisations.
