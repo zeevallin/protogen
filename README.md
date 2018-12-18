@@ -16,7 +16,7 @@ Our motive is to help you focus on collaborating with your colleuages, design po
 - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=zeeraw.protogen) _(official)_
 
 ## Contributing
-First of all, thanks for thinking about contributing to the protogen project. I think with a few people helping me make this tool a reality, it will save a lot of people a lof of trouble when managing their .proto files.
+First of all, thanks for thinking about contributing to the protogen project. We think that with a few people helping us make this tool a reality, it will save many people a lof of time and effort when bringing protobuffers into their organisations.
 
 To get started you first need to pull the project into your `GOPATH` and change your directory to the repository.
 
