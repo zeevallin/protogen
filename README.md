@@ -12,7 +12,7 @@ First of all, thanks for thinking about contributing to the protogen project. I 
 
 To get started you first need to pull the project into your `GOPATH` and change your directory to the repository.
 
-```
+```bash
 $ git clone git@github.com:zeeraw/protogen.git $GOPATH/src/github.com/zeeraw/protogen
 $ cd $GOPATH/src/github.com/zeeraw/protogen
 ```
@@ -23,6 +23,7 @@ You need to have the [**protoc**](https://github.com/protocolbuffers/protobuf) t
 After that you can run the install command and wait for it to complete. After that you should be all set to start adding your cool features or clear documentation to protogen.
 
 ```bash
+# Installs dependencies and the protogen binary to your $GOPATH
 $ make install
 ```
 
