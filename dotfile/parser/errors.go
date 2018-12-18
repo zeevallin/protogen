@@ -1,6 +1,10 @@
 package parser
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/zeeraw/protogen/dotfile/token"
+)
 
 // NewParsingErr returns a parsing error
 func NewParsingErr(line, col int, msg string) error {
@@ -16,4 +20,9 @@ type ErrParsing struct {
 
 func (e ErrParsing) Error() string {
 	return fmt.Sprintf("parsing error line=%d col=%d: %s", e.line, e.col, e.msg)
+}
+
+func (p *Parser) peekError(t token.Type) {
+	err := fmt.Errorf("expected next token to be %s, got %s instead", t, p.Peek().Type)
+	p.Error(err)
 }

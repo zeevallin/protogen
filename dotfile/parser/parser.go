@@ -281,11 +281,6 @@ func (p *Parser) expectPeek(t token.Type) bool {
 	return false
 }
 
-func (p *Parser) peekError(t token.Type) {
-	msg := fmt.Errorf("expected next token to be %s, got %s instead", t, p.Peek().Type)
-	p.errors = append(p.errors, msg)
-}
-
 func (p *Parser) isTerminus() bool {
 	return p.curTokenIs(token.NEWLINE) || p.curTokenIs(token.EOF)
 }
