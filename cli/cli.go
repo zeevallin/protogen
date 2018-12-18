@@ -60,6 +60,7 @@ func Run(args []string) error {
 	app.Authors = authors
 	app.Commands = []cli.Command{
 		runner.cmdGenerate(),
+		runner.cmdInit(),
 		runner.cmdCheck(),
 		runner.cmdAuthors(),
 		runner.cmdVersion(),
