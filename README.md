@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/zeeraw/protogen.svg?branch=master)](https://travis-ci.org/zeeraw/protogen)
 
 # protogen
-Command line tool for centralised structuring of Google's protocol buffers.
+Command line tool and workflow for organising code generation of Google's protocol buffers across multiple projects.
 
 ## Purpose
 Using Google's protocol buffers bring great potential for substantial performance gains and type safety over the wire. But it also comes with the constraint that you need to share proto files among all your service providers and consumers.
