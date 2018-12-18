@@ -4,12 +4,13 @@
 # protogen
 Command line tool for centralised structuring of Google's protocol buffers.
 
-## Motive
+## Purpose
 Using Google's protocol buffers bring great potential for substantial performance gains and type safety over the wire. But it also comes with the constraint that you need to share proto files among all your service providers and consumers.
 
 Protogen works under the assumption, and with the approach that proto files should be centralised in one repository, divided into packages, version tagged and made available through Git. What the protogen tool provides is a workflow for organising and versioning your protobuf contracts by abstracting [**protoc**](https://github.com/protocolbuffers/protobuf) and [**git**](https://git-scm.com/), acting like a package manager for protoc generated code.
 
-We want you to focus on collaborating with your colleuages, design powerful APIs and build great projects.
+Our motive is to help you focus on collaborating with your colleuages, design powerful APIs and build great projects.
+
 
 ## Editor Support
 - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=zeeraw.protogen) _(official)_
