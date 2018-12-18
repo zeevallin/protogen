@@ -21,3 +21,19 @@ func (r *Runner) flagProtogenFile() cli.Flag {
 		EnvVar:      "PROTOGEN_FILE",
 	}
 }
+
+func (r *Runner) flagSource() cli.Flag {
+	return &cli.StringFlag{
+		Name:        "source",
+		Usage:       "the remote repository for your proto files",
+		Destination: r.source,
+	}
+}
+
+func (r *Runner) flagLang() cli.Flag {
+	return &cli.StringFlag{
+		Name:        "lang",
+		Usage:       "the language you want to generate code for in this project",
+		Destination: r.lang,
+	}
+}

@@ -34,6 +34,8 @@ var (
 type Runner struct {
 	protogenFile string
 	verbose      bool
+	lang         *string
+	source       *string
 }
 
 func (r *Runner) logger() *log.Logger {
