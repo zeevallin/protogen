@@ -109,11 +109,35 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 		Token: p.curToken,
 		Value: p.curToken.Literal,
 	}
+	p.nextToken()
+
+	for p.curTokenIs(token.WHITESPACE) {
+		p.nextToken()
+	}
+
+	if p.isBlockStart() {
+		stmt.Block = p.parseBlock()
+	}
 
 	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
 		p.nextToken()
 	}
+
 	return stmt
+}
+
+func (p *Parser) parseBlock() *ast.Block {
+	var statements []ast.Statement
+	for p.curToken.Type != token.RIGHTBRACE {
+		stmt := p.parseGoStatement()
+		if stmt != nil {
+			statements = append(statements, stmt)
+		}
+		p.nextToken()
+	}
+	return &ast.Block{
+		Statements: statements,
+	}
 }
 
 func (p *Parser) parseOutputStatement() ast.Statement {
@@ -217,4 +241,7 @@ func (p *Parser) expectPeek(t token.Type) bool {
 func (p *Parser) peekError(t token.Type) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
+}
+func (p *Parser) isBlockStart() bool {
+	return p.curTokenIs(token.LEFTBRACE)
 }
