@@ -11,6 +11,24 @@ Protogen works under the assumption, and with the approach that proto files shou
 
 Our motive is to help you focus on collaborating with your colleuages, design powerful APIs and build great projects.
 
+## What is protogen?
+The protogen project consists of three things, the [**command line tool**](), the [**workflow**]() and the [**.protogen file**](). These are all the things you need to manage your proto files.
+
+### The command line tool
+The command line tool is used to both manage your central protobuf repository and to automate code generation in service and consumer projects.
+
+#### Installing
+The easiest way of obtaining the protogen command line tool for any platform is by installing it through Go package installer. Run the command and immediately have access to the tool.
+
+```bash
+$ go get -u github.com/zeeraw/protogen
+```
+
+### The workflow
+The protogen workflow is how you should manage your central protobuf repository.
+
+### The .protogen file
+The protogen file is a definition of what protobuf code should be generated inside a given project.
 
 ## Editor Support
 - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=zeeraw.protogen) _(official)_
