@@ -24,10 +24,11 @@ func New(logger *log.Logger, l *lexer.Lexer) *Parser {
 // Parser represens the current parse job
 type Parser struct {
 	l         *lexer.Lexer
-	errors    []error
 	curToken  token.Token
 	peekToken token.Token
-	logger    *log.Logger
+	errors    []error
+
+	logger *log.Logger
 }
 
 // Parse will attempt to parse a configuration file
