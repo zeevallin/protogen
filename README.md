@@ -3,3 +3,6 @@
 
 # protogen
 Command line tool for centralised structuring of Google's protocol buffers.
+
+## Editor Support
+- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=zeeraw.protogen) _(official)_
