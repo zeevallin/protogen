@@ -16,8 +16,8 @@ func New(logger *log.Logger, l *lexer.Lexer) *Parser {
 		errors: []string{},
 		logger: logger,
 	}
-	p.nextToken()
-	p.nextToken()
+	p.Next() // Roll forward once to set the peek token
+	p.Next() // Roll forward twice to make the first peek token the current token
 	return p
 }
 
@@ -40,7 +40,7 @@ func (p *Parser) Parse() (cf *ast.ConfigurationFile, err error) {
 		if stmt != nil {
 			cf.Statements = append(cf.Statements, stmt)
 		}
-		p.nextToken()
+		p.Next()
 	}
 
 	return cf, nil
@@ -51,7 +51,8 @@ func (p *Parser) Errors() []string {
 	return p.errors
 }
 
-func (p *Parser) nextToken() {
+// Next will roll the parser forward by one token
+func (p *Parser) Next() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
@@ -87,8 +88,8 @@ func (p *Parser) parseSourceStatement() ast.Statement {
 		Value: p.curToken.Literal,
 	}
 
-	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
-		p.nextToken()
+	for !p.isTerminus() {
+		p.Next()
 	}
 	return stmt
 }
@@ -109,10 +110,10 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 		Token: p.curToken,
 		Value: p.curToken.Literal,
 	}
-	p.nextToken()
+	p.Next()
 
 	for p.curTokenIs(token.WHITESPACE) {
-		p.nextToken()
+		p.Next()
 	}
 
 	if p.isBlockStart() {
@@ -120,7 +121,7 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 	}
 
 	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
-		p.nextToken()
+		p.Next()
 	}
 
 	return stmt
@@ -133,7 +134,7 @@ func (p *Parser) parseBlock() *ast.Block {
 		if stmt != nil {
 			statements = append(statements, stmt)
 		}
-		p.nextToken()
+		p.Next()
 	}
 	return &ast.Block{
 		Statements: statements,
@@ -158,7 +159,7 @@ func (p *Parser) parseOutputStatement() ast.Statement {
 	}
 
 	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
-		p.nextToken()
+		p.Next()
 	}
 	return stmt
 }
@@ -206,7 +207,7 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 	}
 
 	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
-		p.nextToken()
+		p.Next()
 	}
 	return stmt
 }
@@ -222,7 +223,7 @@ func (p *Parser) peekTokenIs(t token.Type) bool {
 func (p *Parser) expectAnyPeek(ts ...token.Type) bool {
 	for _, t := range ts {
 		if p.peekTokenIs(t) {
-			p.nextToken()
+			p.Next()
 			return true
 		}
 	}
@@ -231,7 +232,7 @@ func (p *Parser) expectAnyPeek(ts ...token.Type) bool {
 
 func (p *Parser) expectPeek(t token.Type) bool {
 	if p.peekTokenIs(t) {
-		p.nextToken()
+		p.Next()
 		return true
 	}
 	p.peekError(t)
