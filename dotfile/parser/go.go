@@ -6,7 +6,7 @@ import (
 )
 
 func (p *Parser) parseGoStatement() ast.Statement {
-	switch p.curToken.Type {
+	switch p.Token().Type {
 	case token.PATH:
 		return p.parseGoPathStatement()
 	case token.PLUGIN:
@@ -18,34 +18,22 @@ func (p *Parser) parseGoStatement() ast.Statement {
 
 func (p *Parser) parseGoPathStatement() ast.Statement {
 	stmt := &ast.GoPathStatement{
-		Token: p.curToken,
+		Token: p.Token(),
 	}
-	if !p.expectPeek(token.WHITESPACE) {
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
-	if !p.expectPeek(token.IDENTIFIER) {
-		return nil
-	}
-	stmt.Type = &ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
+	stmt.Type = ast.NewIdentifier(p.Token())
 	return stmt
 }
 
 func (p *Parser) parseGoPluginStatement() ast.Statement {
 	stmt := &ast.GoPluginStatement{
-		Token: p.curToken,
+		Token: p.Token(),
 	}
-	if !p.expectPeek(token.WHITESPACE) {
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
-	if !p.expectPeek(token.IDENTIFIER) {
-		return nil
-	}
-	stmt.Name = &ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
+	stmt.Name = ast.NewIdentifier(p.Token())
 	return stmt
 }

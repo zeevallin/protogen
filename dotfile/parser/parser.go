@@ -23,10 +23,10 @@ func New(logger *log.Logger, l *lexer.Lexer) *Parser {
 
 // Parser represens the current parse job
 type Parser struct {
-	l         *lexer.Lexer
-	curToken  token.Token
-	peekToken token.Token
-	errors    []error
+	l      *lexer.Lexer
+	curr   token.Token
+	peek   token.Token
+	errors []error
 
 	logger *log.Logger
 }
@@ -60,12 +60,22 @@ func (p *Parser) Errors() []error {
 
 // Next will roll the parser forward by one token
 func (p *Parser) Next() {
-	p.curToken = p.peekToken
-	p.peekToken = p.l.NextToken()
+	p.curr = p.peek
+	p.peek = p.l.NextToken()
+}
+
+// Peek will look at the next token without rolling the parser forward
+func (p *Parser) Peek() token.Token {
+	return p.peek
+}
+
+// Token will look at the current token
+func (p *Parser) Token() token.Token {
+	return p.curr
 }
 
 func (p *Parser) parseStatement() ast.Statement {
-	switch p.curToken.Type {
+	switch p.Token().Type {
 	case token.SOURCE:
 		return p.parseSourceStatement()
 	case token.LANGUAGE:
@@ -81,14 +91,12 @@ func (p *Parser) parseStatement() ast.Statement {
 
 func (p *Parser) parseSourceStatement() ast.Statement {
 	stmt := &ast.SourceStatement{
-		Token: p.curToken,
+		Token: p.Token(),
 	}
 	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
-
-	stmt.Source = ast.NewIdentifier(p.curToken)
-
+	stmt.Source = ast.NewIdentifier(p.Token())
 	for !p.isTerminus() {
 		p.Next()
 	}
@@ -97,33 +105,28 @@ func (p *Parser) parseSourceStatement() ast.Statement {
 
 func (p *Parser) parseLanguageStatement() ast.Statement {
 	stmt := &ast.LanguageStatement{
-		Token: p.curToken,
+		Token: p.Token(),
 	}
 	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
-
-	stmt.Name = ast.NewIdentifier(p.curToken)
+	stmt.Name = ast.NewIdentifier(p.Token())
 	p.Next()
-
 	for p.curTokenIs(token.WHITESPACE) {
 		p.Next()
 	}
-
 	if p.isBlockStart() {
 		stmt.Block = p.parseBlock()
 	}
-
 	for !p.isTerminus() {
 		p.Next()
 	}
-
 	return stmt
 }
 
 func (p *Parser) parseBlock() *ast.Block {
 	var statements []ast.Statement
-	for p.curToken.Type != token.RIGHTBRACE {
+	for !p.curTokenIs(token.RIGHTBRACE) {
 		stmt := p.parseGoStatement()
 		if stmt != nil {
 			statements = append(statements, stmt)
@@ -137,12 +140,12 @@ func (p *Parser) parseBlock() *ast.Block {
 
 func (p *Parser) parseOutputStatement() ast.Statement {
 	stmt := &ast.OutputStatement{
-		Token: p.curToken,
+		Token: p.Token(),
 	}
 	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
-	stmt.Path = ast.NewIdentifier(p.curToken)
+	stmt.Path = ast.NewIdentifier(p.Token())
 	for !p.isTerminus() {
 		p.Next()
 	}
@@ -151,28 +154,23 @@ func (p *Parser) parseOutputStatement() ast.Statement {
 
 func (p *Parser) parseGenerateStatement() ast.Statement {
 	stmt := &ast.GenerateStatement{
-		Token: p.curToken,
+		Token: p.Token(),
 	}
 	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
-
-	stmt.Target = ast.NewIdentifier(p.curToken)
-
+	stmt.Target = ast.NewIdentifier(p.Token())
 	if p.peekTokenIs(token.NEWLINE) {
 		stmt.Tag = nil
 		return stmt
 	}
-
 	if !p.expectPeek(token.WHITESPACE) {
 		return nil
 	}
 	if !p.expectAnyPeek(token.IDENTIFIER, token.VERSION) {
 		return nil
 	}
-
-	idnt := ast.NewIdentifier(p.curToken)
-
+	idnt := ast.NewIdentifier(p.Token())
 	if p.curTokenIs(token.VERSION) {
 		stmt.Tag = &ast.Version{
 			Identifier: *idnt,
@@ -180,7 +178,6 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 	} else {
 		stmt.Tag = idnt
 	}
-
 	for !p.isTerminus() {
 		p.Next()
 	}
@@ -201,11 +198,11 @@ func (p *Parser) skipWhitespaceUntil(t token.Type) bool {
 }
 
 func (p *Parser) curTokenIs(t token.Type) bool {
-	return p.curToken.Type == t
+	return p.Token().Type == t
 }
 
 func (p *Parser) peekTokenIs(t token.Type) bool {
-	return p.peekToken.Type == t
+	return p.Peek().Type == t
 }
 
 func (p *Parser) expect(t token.Type) bool {
@@ -236,7 +233,7 @@ func (p *Parser) expectPeek(t token.Type) bool {
 }
 
 func (p *Parser) peekError(t token.Type) {
-	msg := fmt.Errorf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
+	msg := fmt.Errorf("expected next token to be %s, got %s instead", t, p.Peek().Type)
 	p.errors = append(p.errors, msg)
 }
 
