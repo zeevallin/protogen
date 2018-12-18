@@ -41,9 +41,16 @@ func (p *Parser) Parse() (*ast.ConfigurationFile, error) {
 		}
 		p.Next()
 	}
+	var err error
+	if len(p.errors) > 0 {
+		err = fmt.Errorf("parsing error: there were %d errors while parsing configuration file", len(p.errors))
+	}
 	return f, err
 }
 
+// Error will add an error to the parser errors
+func (p *Parser) Error(err error) {
+	p.errors = append(p.errors, err)
 }
 
 // Errors return all current errors for the parser
