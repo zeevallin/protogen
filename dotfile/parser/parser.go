@@ -30,8 +30,8 @@ type Parser struct {
 	logger    *log.Logger
 }
 
-// ParseConfigurationFile will attempt to parse a configuration file
-func (p *Parser) ParseConfigurationFile() (cf *ast.ConfigurationFile, err error) {
+// Parse will attempt to parse a configuration file
+func (p *Parser) Parse() (cf *ast.ConfigurationFile, err error) {
 	cf = &ast.ConfigurationFile{}
 	cf.Statements = []ast.Statement{}
 

@@ -20,7 +20,7 @@ func ReadConfigFromFilePath(logger *log.Logger, path string) (*config.Config, er
 	l := lexer.New(logger, f)
 	p := parser.New(logger, l)
 
-	cfg, err := p.ParseConfigurationFile()
+	cfg, err := p.Parse()
 	if err != nil {
 		return nil, err
 	}

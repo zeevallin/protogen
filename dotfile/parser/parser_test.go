@@ -28,7 +28,7 @@ func TestParseConfigurationFile(t *testing.T) {
 			generate fizz/buzz master
 			generate furry/trash/can
 		`)
-		cf, err := p.ParseConfigurationFile()
+		cf, err := p.Parse()
 		if err != nil {
 			panic(err)
 		}
@@ -75,7 +75,7 @@ func TestParseConfigurationFile(t *testing.T) {
 			generate fizz/buzz master
 			generate furry/trash/can
 		`)
-		cf, err := p.ParseConfigurationFile()
+		cf, err := p.Parse()
 		if err != nil {
 			panic(err)
 		}
