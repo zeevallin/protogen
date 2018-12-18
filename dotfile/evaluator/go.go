@@ -16,12 +16,12 @@ func (e *Evaluator) evalLanguageGoConfigBlock(blk *ast.Block) (golang.Config, er
 	for _, stmt := range blk.Statements {
 		var err error
 		switch node := stmt.(type) {
-		case *ast.GoPathStatement:
+		case *ast.PathStatement:
 			paths, err = e.evalGoPath(node)
 			if err != nil {
 				return cfg, err
 			}
-		case *ast.GoPluginStatement:
+		case *ast.PluginStatement:
 			plugin, err := e.evalGoPlugin(node)
 			if err != nil {
 				return cfg, err
@@ -36,11 +36,11 @@ func (e *Evaluator) evalLanguageGoConfigBlock(blk *ast.Block) (golang.Config, er
 	return cfg, nil
 }
 
-func (e *Evaluator) evalGoPlugin(stmt *ast.GoPluginStatement) (golang.Plugin, error) {
+func (e *Evaluator) evalGoPlugin(stmt *ast.PluginStatement) (golang.Plugin, error) {
 	plugin := golang.Plugin(stmt.Name.String())
 	return plugin, golang.IsAllowedPlugin(plugin)
 }
-func (e *Evaluator) evalGoPath(stmt *ast.GoPathStatement) (golang.Path, error) {
+func (e *Evaluator) evalGoPath(stmt *ast.PathStatement) (golang.Path, error) {
 	path := golang.Path(stmt.Type.String())
 	return path, golang.IsAllowedPath(path)
 }

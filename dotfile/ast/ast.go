@@ -129,6 +129,30 @@ func NewIdentifier(t token.Token) *Identifier {
 	}
 }
 
+// PluginStatement is a statement for go
+type PluginStatement struct {
+	Token token.Token // token.PLUGIN
+	Name  Expression
+}
+
+// TokenLiteral returns the source statement token literal string
+func (gps *PluginStatement) TokenLiteral() string { return gps.Token.Literal }
+func (gps *PluginStatement) String() string {
+	return fmt.Sprintf("%s %s", token.KWPlugin, gps.Name)
+}
+
+// PathStatement is a statement for go
+type PathStatement struct {
+	Token token.Token // token.PATH
+	Type  Expression
+}
+
+// TokenLiteral returns the source statement token literal string
+func (gps *PathStatement) TokenLiteral() string { return gps.Token.Literal }
+func (gps *PathStatement) String() string {
+	return fmt.Sprintf("%s %s", token.KWPath, gps.Type)
+}
+
 // Identifier describes a value in the configuration
 type Identifier struct {
 	Token token.Token // token.IDENTIFIER

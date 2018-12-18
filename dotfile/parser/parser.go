@@ -84,6 +84,10 @@ func (p *Parser) parseStatement() ast.Statement {
 		return p.parseOutputStatement()
 	case token.GENERATE:
 		return p.parseGenerateStatement()
+	case token.PATH:
+		return p.parsePathStatement()
+	case token.PLUGIN:
+		return p.parsePluginStatement()
 	default:
 		return nil
 	}
@@ -127,7 +131,7 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 func (p *Parser) parseBlock() *ast.Block {
 	var statements []ast.Statement
 	for !p.curTokenIs(token.RIGHTBRACE) {
-		stmt := p.parseGoStatement()
+		stmt := p.parseStatement()
 		if stmt != nil {
 			statements = append(statements, stmt)
 		}
@@ -184,6 +188,41 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 	return stmt
 }
 
+func (p *Parser) parsePathStatement() ast.Statement {
+	stmt := &ast.PathStatement{
+		Token: p.Token(),
+	}
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
+		return nil
+	}
+	stmt.Type = ast.NewIdentifier(p.Token())
+	return stmt
+}
+
+func (p *Parser) parsePluginStatement() ast.Statement {
+	stmt := &ast.PluginStatement{
+		Token: p.Token(),
+	}
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
+		return nil
+	}
+	stmt.Name = ast.NewIdentifier(p.Token())
+	return stmt
+}
+
+func (p *Parser) skipWhitespaceUntilAny(ts ...token.Type) bool {
+	if !p.expectPeek(token.WHITESPACE) {
+		return false
+	}
+	for p.curTokenIs(token.WHITESPACE) {
+		p.Next()
+	}
+	if !p.expectAny(ts...) {
+		return false
+	}
+	return true
+}
+
 func (p *Parser) skipWhitespaceUntil(t token.Type) bool {
 	if !p.expectPeek(token.WHITESPACE) {
 		return false
@@ -203,6 +242,16 @@ func (p *Parser) curTokenIs(t token.Type) bool {
 
 func (p *Parser) peekTokenIs(t token.Type) bool {
 	return p.Peek().Type == t
+}
+
+func (p *Parser) expectAny(ts ...token.Type) bool {
+	for _, t := range ts {
+		if p.curTokenIs(t) {
+			return true
+		}
+	}
+	p.Next()
+	return false
 }
 
 func (p *Parser) expect(t token.Type) bool {

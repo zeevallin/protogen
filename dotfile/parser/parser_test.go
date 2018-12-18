@@ -65,13 +65,13 @@ func TestParseConfigurationFile(t *testing.T) {
 
 	t.Run("source statement and language statement with a block", func(t *testing.T) {
 		p := newParser(`
-			source github.com/zeeraw/protogen-protos
+			source    github.com/zeeraw/protogen-protos
 			language go {
 				plugin grpc
 				path source_relative
 			}
 			generate bar v1.0.0
-			generate bar/baz v1.0.0
+			generate   bar/baz v1.0.0
 			generate fizz/buzz master
 			generate furry/trash/can
 		`)
@@ -112,14 +112,14 @@ func TestParseConfigurationFile(t *testing.T) {
 				if bl != el {
 					t.Fatalf("language block statements should have a length of %d, was: %d", el, bl)
 				}
-				plugin, ok := node.Block.Statements[0].(*ast.GoPluginStatement)
+				plugin, ok := node.Block.Statements[0].(*ast.PluginStatement)
 				if !ok {
-					t.Fatalf("first language block statement should be an *ast.GoPluginStatement")
+					t.Fatalf("first language block statement should be an *ast.PluginStatement")
 				}
 				test.AssertEqual(t, "grpc", plugin.Name.String())
-				path, ok := node.Block.Statements[1].(*ast.GoPathStatement)
+				path, ok := node.Block.Statements[1].(*ast.PathStatement)
 				if !ok {
-					t.Fatalf("second language block statement should be an *ast.GoPathStatement")
+					t.Fatalf("second language block statement should be an *ast.PathStatement")
 				}
 				test.AssertEqual(t, "source_relative", path.Type.String())
 			}
