@@ -80,3 +80,7 @@ func (p *Parser) isTerminus() bool {
 func (p *Parser) isBlockStart() bool {
 	return p.curTokenIs(token.LEFTBRACE)
 }
+
+func (p *Parser) isBlockEnd() bool {
+	return p.curTokenIs(token.RIGHTBRACE)
+}

@@ -26,7 +26,7 @@ func (p *Parser) parseStatement() ast.Statement {
 
 func (p *Parser) parseBlock() *ast.Block {
 	var statements []ast.Statement
-	for !p.curTokenIs(token.RIGHTBRACE) {
+	for !p.isBlockEnd() {
 		stmt := p.parseStatement()
 		if stmt != nil {
 			statements = append(statements, stmt)
