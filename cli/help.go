@@ -21,8 +21,10 @@ Run '{{.Name}} help COMMAND' for more information on a command.
 	cli.CommandHelpTemplate = `Usage: {{.HelpName}}{{if .VisibleFlags}} [OPTIONS]{{end}}{{if .ArgsUsage}} {{.ArgsUsage}}{{else}} [ARGUMENTS...]{{end}}
 
 {{.Description}}
-{{if .VisibleFlags}}Options:
-   {{range .VisibleFlags}}{{.}}{{end}}
+{{if .VisibleFlags}}
+Options:
+	{{range .VisibleFlags}}{{.}}
+	{{end -}}
 {{end -}}
 `
 }
