@@ -1,8 +1,7 @@
 package evaluator
 
 import (
-	"fmt"
-
+	"github.com/zeeraw/protogen/config"
 	"github.com/zeeraw/protogen/config/go"
 	"github.com/zeeraw/protogen/dotfile/ast"
 )
@@ -28,7 +27,7 @@ func (e *Evaluator) evalLanguageGoConfigBlock(blk *ast.Block) (golang.Config, er
 			}
 			plugins = append(plugins, plugin)
 		default:
-			return cfg, fmt.Errorf("format string")
+			return cfg, ErrStatementNotSupported{config.Go, stmt}
 		}
 	}
 	cfg.Paths = paths
