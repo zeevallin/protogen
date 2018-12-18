@@ -13,7 +13,7 @@ import (
 func New(logger *log.Logger, l *lexer.Lexer) *Parser {
 	p := &Parser{
 		l:      l,
-		errors: []string{},
+		errors: []error{},
 		logger: logger,
 	}
 	p.Next() // Roll forward once to set the peek token
@@ -24,7 +24,7 @@ func New(logger *log.Logger, l *lexer.Lexer) *Parser {
 // Parser represens the current parse job
 type Parser struct {
 	l         *lexer.Lexer
-	errors    []string
+	errors    []error
 	curToken  token.Token
 	peekToken token.Token
 	logger    *log.Logger
@@ -47,7 +47,7 @@ func (p *Parser) Parse() (cf *ast.ConfigurationFile, err error) {
 }
 
 // Errors return all current errors for the parser
-func (p *Parser) Errors() []string {
+func (p *Parser) Errors() []error {
 	return p.errors
 }
 
@@ -240,7 +240,7 @@ func (p *Parser) expectPeek(t token.Type) bool {
 }
 
 func (p *Parser) peekError(t token.Type) {
-	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
+	msg := fmt.Errorf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
 func (p *Parser) isBlockStart() bool {
