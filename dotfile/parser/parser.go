@@ -84,10 +84,7 @@ func (p *Parser) parseSourceStatement() ast.Statement {
 		return nil
 	}
 
-	stmt.Source = &ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
+	stmt.Source = ast.NewIdentifier(p.curToken)
 
 	for !p.isTerminus() {
 		p.Next()
@@ -107,10 +104,7 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 		return nil
 	}
 
-	stmt.Name = &ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
+	stmt.Name = ast.NewIdentifier(p.curToken)
 	p.Next()
 
 	for p.curTokenIs(token.WHITESPACE) {
@@ -153,12 +147,7 @@ func (p *Parser) parseOutputStatement() ast.Statement {
 	if !p.expectPeek(token.IDENTIFIER) {
 		return nil
 	}
-
-	stmt.Path = &ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
-
+	stmt.Path = ast.NewIdentifier(p.curToken)
 	for !p.isTerminus() {
 		p.Next()
 	}
@@ -177,10 +166,7 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 		return nil
 	}
 
-	stmt.Target = &ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
+	stmt.Target = ast.NewIdentifier(p.curToken)
 
 	if p.peekTokenIs(token.NEWLINE) {
 		stmt.Tag = nil
@@ -194,17 +180,14 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 		return nil
 	}
 
-	idnt := ast.Identifier{
-		Token: p.curToken,
-		Value: p.curToken.Literal,
-	}
+	idnt := ast.NewIdentifier(p.curToken)
 
 	if p.curTokenIs(token.VERSION) {
 		stmt.Tag = &ast.Version{
-			Identifier: idnt,
+			Identifier: *idnt,
 		}
 	} else {
-		stmt.Tag = &idnt
+		stmt.Tag = idnt
 	}
 
 	for !p.isTerminus() {

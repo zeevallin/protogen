@@ -114,6 +114,14 @@ type OutputStatement struct {
 func (ls *OutputStatement) TokenLiteral() string { return ls.Token.Literal }
 func (ls *OutputStatement) String() string       { return fmt.Sprintf("%s %s", token.KWOutput, ls.Path) }
 
+// NewIdentifier returns an identifier based on a token
+func NewIdentifier(t token.Token) *Identifier {
+	return &Identifier{
+		Token: t,
+		Value: t.Literal,
+	}
+}
+
 // Identifier describes a value in the configuration
 type Identifier struct {
 	Token token.Token // token.IDENTIFIER
