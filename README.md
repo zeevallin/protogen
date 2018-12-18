@@ -12,7 +12,7 @@ Protogen works under the assumption, and with the approach that proto files shou
 Our motive is to help you focus on collaborating with your colleuages, design powerful APIs and build great projects.
 
 ## What is protogen?
-The protogen project consists of three things, the [**command line tool**](), the [**workflow**]() and the [**.protogen file**](). These are all the things you need to manage your proto files.
+The protogen project consists of three things, the [**command line tool**](#the-command-line-tool), the [**workflow**](#the-workflow) and the [**.protogen file**](#the-protogen-file). These are all the things you need to manage your proto files.
 
 ### The command line tool
 The command line tool is used to both manage your central protobuf repository and to automate code generation in service and consumer projects.
