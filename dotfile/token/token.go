@@ -35,6 +35,12 @@ const (
 	// OUTPUT defines the keywod for where to generate packages to
 	OUTPUT = "OUTPUT"
 
+	// PLUGIN defines the keyword for adding a plugin for go code generation
+	PLUGIN = "PLUGIN"
+
+	// PATH defines the keyword for defining the import pathing for go code generation
+	PATH = "PATH"
+
 	// Literals
 
 	// VERSION defines a version value
@@ -70,6 +76,12 @@ const (
 
 	// KWOutput is the explicit keyword for output
 	KWOutput = "output"
+
+	// KWPlugin is the explicit keyword for a go plugin
+	KWPlugin = "plugin"
+
+	// KWPath is the explicit keyword for a go import path
+	KWPath = "path"
 )
 
 var (
@@ -79,6 +91,8 @@ var (
 		KWLanguage: LANGUAGE,
 		KWGenerate: GENERATE,
 		KWOutput:   OUTPUT,
+		KWPath:     PATH,
+		KWPlugin:   PLUGIN,
 	}
 )
 

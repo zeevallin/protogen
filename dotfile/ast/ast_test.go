@@ -56,8 +56,8 @@ func TestConfigurationFile(t *testing.T) {
 						Statements: []ast.Statement{
 							&ast.GoPluginStatement{
 								Token: token.Token{
-									Literal: token.KWGoPlugin,
-									Type:    token.GOPLUGIN,
+									Literal: token.KWPlugin,
+									Type:    token.PLUGIN,
 								},
 								Name: &ast.Identifier{
 									Token: token.Token{

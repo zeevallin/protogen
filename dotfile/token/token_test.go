@@ -13,6 +13,8 @@ func TestLookupIdentifier(t *testing.T) {
 		test.AssertEqual(t, token.Type("LANGUAGE"), token.LookupIdentifier("language"))
 		test.AssertEqual(t, token.Type("GENERATE"), token.LookupIdentifier("generate"))
 		test.AssertEqual(t, token.Type("OUTPUT"), token.LookupIdentifier("output"))
+		test.AssertEqual(t, token.Type("PATH"), token.LookupIdentifier("path"))
+		test.AssertEqual(t, token.Type("PLUGIN"), token.LookupIdentifier("plugin"))
 	})
 	t.Run("with unknown identifier", func(tt *testing.T) {
 		test.AssertEqual(t, token.Type("IDENTIFIER"), token.LookupIdentifier("some/thing"))
