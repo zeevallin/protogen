@@ -25,7 +25,7 @@ $ go get -u github.com/zeeraw/protogen
 ```
 
 ### The workflow
-The protogen workflow is how you should manage your central protobuf repository.
+The protogen workflow is how you should manage your central protobuf repository. This includes how to structure your packages and how to tag your releases. Visit our [**example repository**](https://github.com/zeeraw/protogen-protos) where we showcase how to structure our proto files. You can also [**read more about the protogen workflow on the wiki**](https://github.com/zeeraw/protogen/wiki/Workflow).
 
 ### The .protogen file
 [**The .protogen file**](https://github.com/zeeraw/protogen/wiki/Protogen-file) is a definition of what protobuf code should be generated inside a given project. To write the file you use [**the protogen configuration language**](https://github.com/zeeraw/protogen/wiki/Configuration-language).
