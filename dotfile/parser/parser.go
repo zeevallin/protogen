@@ -83,10 +83,7 @@ func (p *Parser) parseSourceStatement() ast.Statement {
 	stmt := &ast.SourceStatement{
 		Token: p.curToken,
 	}
-	if !p.expectPeek(token.WHITESPACE) {
-		return nil
-	}
-	if !p.expectPeek(token.IDENTIFIER) {
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
 
@@ -102,11 +99,7 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 	stmt := &ast.LanguageStatement{
 		Token: p.curToken,
 	}
-
-	if !p.expectPeek(token.WHITESPACE) {
-		return nil
-	}
-	if !p.expectPeek(token.IDENTIFIER) {
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
 
@@ -146,11 +139,7 @@ func (p *Parser) parseOutputStatement() ast.Statement {
 	stmt := &ast.OutputStatement{
 		Token: p.curToken,
 	}
-
-	if !p.expectPeek(token.WHITESPACE) {
-		return nil
-	}
-	if !p.expectPeek(token.IDENTIFIER) {
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
 	stmt.Path = ast.NewIdentifier(p.curToken)
@@ -164,11 +153,7 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 	stmt := &ast.GenerateStatement{
 		Token: p.curToken,
 	}
-
-	if !p.expectPeek(token.WHITESPACE) {
-		return nil
-	}
-	if !p.expectPeek(token.IDENTIFIER) {
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
 		return nil
 	}
 
@@ -202,12 +187,33 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 	return stmt
 }
 
+func (p *Parser) skipWhitespaceUntil(t token.Type) bool {
+	if !p.expectPeek(token.WHITESPACE) {
+		return false
+	}
+	for p.curTokenIs(token.WHITESPACE) {
+		p.Next()
+	}
+	if !p.expect(t) {
+		return false
+	}
+	return true
+}
+
 func (p *Parser) curTokenIs(t token.Type) bool {
 	return p.curToken.Type == t
 }
 
 func (p *Parser) peekTokenIs(t token.Type) bool {
 	return p.peekToken.Type == t
+}
+
+func (p *Parser) expect(t token.Type) bool {
+	if p.curTokenIs(t) {
+		return true
+	}
+	p.Next()
+	return false
 }
 
 func (p *Parser) expectAnyPeek(ts ...token.Type) bool {
