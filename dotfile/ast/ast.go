@@ -66,6 +66,20 @@ type Expression interface {
 	Node
 }
 
+// NewSourceStatement will return a valid source statment based on a string value
+func NewSourceStatement(s string) *SourceStatement {
+	return &SourceStatement{
+		Token: token.Token{
+			Type:    token.SOURCE,
+			Literal: token.KWSource,
+		},
+		Source: NewIdentifier(token.Token{
+			Literal: s,
+			Type:    token.IDENTIFIER,
+		}),
+	}
+}
+
 // SourceStatement describes the source of the proto buffers
 type SourceStatement struct {
 	Token  token.Token // token.SOURCE
@@ -89,6 +103,20 @@ type GenerateStatement struct {
 func (gs *GenerateStatement) TokenLiteral() string { return gs.Token.Literal }
 func (gs *GenerateStatement) String() string {
 	return fmt.Sprintf("%s %s %s", token.KWGenerate, gs.Target, gs.Tag)
+}
+
+// NewLanguageStatement will return a valid source statment based on a string value
+func NewLanguageStatement(s string) *LanguageStatement {
+	return &LanguageStatement{
+		Token: token.Token{
+			Type:    token.LANGUAGE,
+			Literal: token.KWLanguage,
+		},
+		Name: NewIdentifier(token.Token{
+			Literal: s,
+			Type:    token.IDENTIFIER,
+		}),
+	}
 }
 
 // LanguageStatement describes what language to generate the protobuffers for
