@@ -32,19 +32,18 @@ type Parser struct {
 }
 
 // Parse will attempt to parse a configuration file
-func (p *Parser) Parse() (cf *ast.ConfigurationFile, err error) {
-	cf = &ast.ConfigurationFile{}
-	cf.Statements = []ast.Statement{}
-
-	for p.curToken.Type != token.EOF {
+func (p *Parser) Parse() (*ast.ConfigurationFile, error) {
+	f := ast.NewConfigurationFile()
+	for !p.curTokenIs(token.EOF) {
 		stmt := p.parseStatement()
 		if stmt != nil {
-			cf.Statements = append(cf.Statements, stmt)
+			f.Statements = append(f.Statements, stmt)
 		}
 		p.Next()
 	}
+	return f, err
+}
 
-	return cf, nil
 }
 
 // Errors return all current errors for the parser

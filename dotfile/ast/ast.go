@@ -7,6 +7,13 @@ import (
 	"github.com/zeeraw/protogen/dotfile/token"
 )
 
+// NewConfigurationFile returns the top level AST node for a configuration file
+func NewConfigurationFile() *ConfigurationFile {
+	return &ConfigurationFile{
+		Statements: []Statement{},
+	}
+}
+
 // ConfigurationFile is the top level of our AST
 type ConfigurationFile struct {
 	Statements []Statement
