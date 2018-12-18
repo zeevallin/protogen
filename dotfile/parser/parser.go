@@ -120,7 +120,7 @@ func (p *Parser) parseLanguageStatement() ast.Statement {
 		stmt.Block = p.parseBlock()
 	}
 
-	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
+	for !p.isTerminus() {
 		p.Next()
 	}
 
@@ -158,7 +158,7 @@ func (p *Parser) parseOutputStatement() ast.Statement {
 		Value: p.curToken.Literal,
 	}
 
-	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
+	for !p.isTerminus() {
 		p.Next()
 	}
 	return stmt
@@ -206,7 +206,7 @@ func (p *Parser) parseGenerateStatement() ast.Statement {
 		stmt.Tag = &idnt
 	}
 
-	for !p.curTokenIs(token.NEWLINE) && !p.curTokenIs(token.EOF) {
+	for !p.isTerminus() {
 		p.Next()
 	}
 	return stmt
@@ -243,6 +243,11 @@ func (p *Parser) peekError(t token.Type) {
 	msg := fmt.Errorf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
+
+func (p *Parser) isTerminus() bool {
+	return p.curTokenIs(token.NEWLINE) || p.curTokenIs(token.EOF)
+}
+
 func (p *Parser) isBlockStart() bool {
 	return p.curTokenIs(token.LEFTBRACE)
 }
