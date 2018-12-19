@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	masterCommitHash           = "88b0c44e42bed56549c7d1060bd5ec45d8b3ec7c"
+	masterCommitHash           = "5deeaaf1bfd117031b24e55182acdae386c14941"
 	servicesFoobarCommitHashV1 = "4d2b63a1aef7c1ba5f6ff220005d9f4d8ea94443"
 )
 
