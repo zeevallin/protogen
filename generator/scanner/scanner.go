@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -18,20 +19,21 @@ type Scanner struct {
 	GoPkgs map[string][]string
 	Pkgs   map[string][]string
 
-	dict    string
+	root    string
 	files   map[string]struct{}
 	scanned map[string]struct{}
 	logger  *log.Logger
 }
 
 // New creates a new scanning instance
-func New(logger *log.Logger) *Scanner {
+func New(logger *log.Logger, root string) *Scanner {
 	return &Scanner{
 		files:   make(map[string]struct{}),
 		scanned: make(map[string]struct{}),
 		GoPkgs:  make(map[string][]string),
 		Pkgs:    make(map[string][]string),
 		logger:  logger,
+		root:    root,
 	}
 }
 
@@ -44,7 +46,6 @@ type Bundle struct {
 // Scan will take a directory and recursively scan for proto files
 func (s *Scanner) Scan(dict string) []Bundle {
 	files := []string{}
-	s.dict = dict
 	s.logger.Printf("scanner scanning dictionary: %q\n", dict)
 	filepath.Walk(dict, func(path string, f os.FileInfo, err error) error {
 		if path != dict {
@@ -83,13 +84,14 @@ type extraction struct {
 }
 
 func (s *Scanner) extractFile(path string) (ex extraction, err error) {
-	s.logger.Printf("scanner extracting from file: %q\n", strings.TrimPrefix(path, s.dict))
+	s.logger.Printf("scanner extracting from file: %q\n", path)
 	ex = extraction{
 		imports: make([]string, 0),
 	}
 
 	file, err := os.Open(path)
 	if err != nil {
+		s.logger.Printf("scanner failed to open file: %q\n", s.shortPath(path))
 		return ex, err
 	}
 	defer file.Close()
@@ -100,21 +102,21 @@ func (s *Scanner) extractFile(path string) (ex extraction, err error) {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, "\";")
 			txt = strings.TrimPrefix(txt, "import \"")
-			s.logger.Printf("scanner extracting \"import\" in file %q: %s\n", strings.TrimPrefix(path, s.dict), txt)
-			ex.imports = append(ex.imports, txt)
+			s.logger.Printf("scanner extracting \"import\" in file %q: %s\n", s.shortPath(path), txt)
+			ex.imports = append(ex.imports, s.joinPath(txt))
 		}
 		if strings.HasPrefix(scnr.Text(), "option go_package") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, "\";")
 			txt = strings.TrimPrefix(txt, "option go_package = \"")
-			s.logger.Printf("scanner extracting \"go_package\" in file %q: %s\n", strings.TrimPrefix(path, s.dict), txt)
+			s.logger.Printf("scanner extracting \"go_package\" in file %q: %s\n", s.shortPath(path), txt)
 			ex.goPkg = txt
 		}
 		if strings.HasPrefix(scnr.Text(), "package") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, ";")
 			txt = strings.TrimPrefix(txt, "package ")
-			s.logger.Printf("scanner extracting \"package\" in file %q: %s\n", strings.TrimPrefix(path, s.dict), txt)
+			s.logger.Printf("scanner extracting \"package\" in file %q: %s\n", s.shortPath(path), txt)
 			ex.pkg = txt
 		}
 	}
@@ -144,4 +146,12 @@ func (s *Scanner) extractFiles(paths []string) (err error) {
 		}
 	}
 	return nil
+}
+
+func (s *Scanner) shortPath(p string) string {
+	return strings.TrimPrefix(p, fmt.Sprintf("%s/", s.root))
+}
+
+func (s *Scanner) joinPath(p string) string {
+	return path.Join(s.root, p)
 }

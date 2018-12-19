@@ -59,7 +59,7 @@ func (g *Generator) Run() error {
 	}
 
 	g.logger.Printf("generator scanning\n")
-	scanner := scanner.New(g.logger)
+	scanner := scanner.New(g.logger, g.pkg.Source.RootPath())
 	scanner.Scan(g.pkg.Path())
 
 	switch g.pkg.Language {
