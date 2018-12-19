@@ -61,7 +61,7 @@ func Run(args []string) error {
 	app.Commands = []cli.Command{
 		runner.cmdGenerate(),
 		runner.cmdInit(),
-		runner.cmdCheck(),
+		runner.cmdInfo(),
 		runner.cmdAuthors(),
 		runner.cmdVersion(),
 	}

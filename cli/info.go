@@ -22,18 +22,19 @@ var languages = []config.Language{
 	config.Go,
 }
 
-func (r *Runner) cmdCheck() cli.Command {
-	const usage = "checks versions of protogen dependencies"
-	const description = `Scans the filesystem for all relevant dependencies and returns a list.`
+func (r *Runner) cmdInfo() cli.Command {
+	const usage = "shows information about protogen and its dependencies"
+	const description = `Gathers and displays information about the protogen environment and its dependencies.`
 	return cli.Command{
-		Name:        "check",
+		Name:        "info",
 		Usage:       usage,
 		Description: description,
-		Action:      r.check,
+		Action:      r.info,
 	}
 }
 
-func (r *Runner) check(cc *cli.Context) error {
+func (r *Runner) info(cc *cli.Context) error {
+	fmt.Printf("Dependencies\n")
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 0, ' ', 0)
 
 	p := protoc.NewProtoc(r.logger())
