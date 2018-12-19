@@ -15,6 +15,7 @@ func ReadConfigFromFilePath(logger *log.Logger, path string) (*config.Config, er
 	logger.Printf("reading file at %s\n", path)
 	f, err := ioutil.ReadFile(path)
 	if err != nil {
+		logger.Printf("cannot read file: %s\n", err)
 		return nil, err
 	}
 	l := lexer.New(logger, f)
@@ -22,6 +23,7 @@ func ReadConfigFromFilePath(logger *log.Logger, path string) (*config.Config, er
 
 	cfg, err := p.Parse()
 	if err != nil {
+		logger.Printf("cannot parse file: %s\n", err)
 		return nil, err
 	}
 

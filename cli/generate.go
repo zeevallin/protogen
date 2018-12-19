@@ -29,6 +29,7 @@ func (r *Runner) generate(cc *cli.Context) error {
 	cfg, err := ReadConfigFromFilePath(r.logger(), r.protogenFile)
 	if err != nil {
 		fmt.Printf("Cannot read protogen file %q\n", r.protogenFile)
+		r.logger().Println(err)
 		return err
 	}
 	cfg.General = &config.General{

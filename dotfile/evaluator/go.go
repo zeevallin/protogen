@@ -7,6 +7,7 @@ import (
 )
 
 func (e *Evaluator) evalLanguageGoConfigBlock(blk *ast.Block) (golang.Config, error) {
+	e.logger.Printf("evaluating go config block with %d statements\n", len(blk.Statements))
 	var (
 		paths   = golang.SourceRelative
 		plugins = []golang.Plugin{}

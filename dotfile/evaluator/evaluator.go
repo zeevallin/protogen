@@ -70,14 +70,17 @@ func (e *Evaluator) evalStatements(stmts []ast.Statement) error {
 }
 
 func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) (source.Source, error) {
+	e.logger.Printf("evaluating source statement: %s\n", stmt.Source.String())
 	return source.NewRemoteGitSource(e.logger, stmt.Source.String())
 }
 
 func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.Language {
+	e.logger.Printf("evaluating language statement: %s\n", stmt.Name.String())
 	return config.Language(stmt.Name.String())
 }
 
 func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (interface{}, error) {
+	e.logger.Printf("evaluating language config: %s\n", stmt.Name.String())
 	lang := config.Language(stmt.Name.String())
 	switch lang {
 	case config.Go:
@@ -86,11 +89,14 @@ func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (in
 		}
 		return golang.Config{}, nil
 	default:
-		return nil, ErrLanguageNotSupported{}
+		err := ErrLanguageNotSupported{lang}
+		e.logger.Printf("cannot evaluate unsupported: %v\n", err)
+		return nil, err
 	}
 }
 
 func (e *Evaluator) evalOutputStatement(stmt *ast.OutputStatement) string {
+	e.logger.Printf("evaluating output statement: %s\n", stmt.Path.String())
 	return stmt.Path.String()
 }
 
@@ -110,6 +116,8 @@ func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.P
 			Type: source.Branch,
 		}
 	}
+
+	e.logger.Printf("evaluating generate statement: %q %T(%s)\n", stmt.Target.String(), ref.Type, ref.Name)
 
 	return &config.Package{
 		Source:         e.CurrentSource,

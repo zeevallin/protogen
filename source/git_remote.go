@@ -35,6 +35,7 @@ func NewRemoteGitSource(logger *log.Logger, u string) (*RemoteGitSource, error) 
 	logger.Printf("parsing remote git source: %s\n", u)
 	url, err := url.Parse(u)
 	if err != nil {
+		logger.Printf("error parsing url: %s\n", err)
 		return nil, fmt.Errorf(gitSourceErrFmt, err)
 	}
 	switch url.Scheme {
