@@ -36,11 +36,3 @@ func (s *MockSource) Checkout(hash string) error {
 func (s *MockSource) HashForRef(ref Ref) (string, error) {
 	return "", nil
 }
-
-func (s *MockSource) Packages() ([]string, error) {
-	return []string{}, nil
-}
-
-func (s *MockSource) PackageVersions(pkg string) ([]string, error) {
-	return []string{}, nil
-}

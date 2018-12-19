@@ -177,16 +177,6 @@ func (rgs *RemoteGitSource) HashForRef(ref Ref) (string, error) {
 	}
 }
 
-// Packages lists the packages in the repository
-func (rgs *RemoteGitSource) Packages() ([]string, error) {
-	return nil, nil
-}
-
-// PackageVersions lists the versions for a given package
-func (rgs *RemoteGitSource) PackageVersions(pkg string) ([]string, error) {
-	return nil, nil
-}
-
 // hashForBranch derives the commit hash from a branch on the origin
 func (rgs *RemoteGitSource) hashForBranch(branch string) (string, error) {
 	refs, err := rgs.storer.IterReferences()

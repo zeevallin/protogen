@@ -24,7 +24,4 @@ type Source interface {
 
 	Checkout(hash string) error
 	HashForRef(ref Ref) (string, error)
-
-	Packages() ([]string, error)
-	PackageVersions(pkg string) ([]string, error)
 }
