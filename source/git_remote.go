@@ -43,18 +43,20 @@ func NewRemoteGitSource(logger *log.Logger, u string) (*RemoteGitSource, error) 
 		url.Scheme = defaultScheme
 	}
 
-	p := path.Join(os.TempDir(), "protogen")
-	treePath := path.Join(p, "tree")
-	repoPath := path.Join(p, "repo")
+	repoPath := path.Join(os.TempDir(), "protogen")
+	repoFs := osfs.New(repoPath)
 
-	storer := filesystem.NewStorage(osfs.New(treePath), cache.NewObjectLRUDefault())
+	treePath := path.Join(WorkDir, "src", url.Path)
+	treeFs := osfs.New(treePath)
+
+	storer := filesystem.NewStorage(treeFs, cache.NewObjectLRUDefault())
 
 	return &RemoteGitSource{
 		URL:      url.String(),
-		fs:       osfs.New(repoPath),
-		path:     p,
+		repoFs:   repoFs,
 		repoPath: repoPath,
 		treePath: treePath,
+		treeFs:   treeFs,
 		storer:   storer,
 		lock:     &sync.Mutex{},
 		logger:   logger,
@@ -65,11 +67,12 @@ func NewRemoteGitSource(logger *log.Logger, u string) (*RemoteGitSource, error) 
 type RemoteGitSource struct {
 	URL string
 
-	path     string
 	repoPath string
 	treePath string
 
-	fs     billy.Filesystem
+	repoFs billy.Filesystem
+	treeFs billy.Filesystem
+
 	storer storage.Storer
 	repo   *git.Repository
 	wt     *git.Worktree
@@ -105,17 +108,12 @@ func (rgs *RemoteGitSource) fetch() error {
 	case git.NoErrAlreadyUpToDate:
 		return nil
 	}
-	return err
+	return fmt.Errorf(gitInitErrFmt, err)
 }
 
-func (rgs *RemoteGitSource) clone() error {
-	rgs.logger.Printf("removing directory at: %s\n", rgs.path)
-	err := os.RemoveAll(rgs.path)
-	if err != nil {
-		return fmt.Errorf(gitInitErrFmt, err)
-	}
-	rgs.logger.Printf("creating directory for tree: %s\n", rgs.treePath)
-	err = os.MkdirAll(rgs.treePath, 0700)
+func (rgs *RemoteGitSource) reset() error {
+	rgs.logger.Printf("removing directory for repo: %s\n", rgs.repoPath)
+	err := os.RemoveAll(rgs.repoPath)
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
@@ -124,13 +122,46 @@ func (rgs *RemoteGitSource) clone() error {
 	if err != nil {
 		return fmt.Errorf(gitInitErrFmt, err)
 	}
+	return nil
+}
+
+func (rgs *RemoteGitSource) open() (err error) {
+	rgs.logger.Println("opening existing git source")
+	rgs.repo, err = git.Open(rgs.storer, rgs.repoFs)
+	if err != nil {
+		return fmt.Errorf(gitInitErrFmt, err)
+	}
+	return err
+}
+
+func (rgs *RemoteGitSource) clone() error {
+	if err := rgs.reset(); err != nil {
+		return err
+	}
+	rgs.logger.Printf("creating directory for tree: %s\n", rgs.treePath)
+	err := os.MkdirAll(rgs.treePath, 0700)
+	if err != nil {
+		return fmt.Errorf(gitInitErrFmt, err)
+	}
 	rgs.logger.Println("cloning git repository")
-	rgs.repo, err = git.Clone(rgs.storer, rgs.fs, &git.CloneOptions{
+	rgs.repo, err = git.Clone(rgs.storer, rgs.repoFs, &git.CloneOptions{
 		URL:  rgs.URL,
 		Tags: git.AllTags,
 	})
 	if err != nil {
-		return fmt.Errorf(gitInitErrFmt, err)
+		switch err {
+		case git.ErrRepositoryAlreadyExists:
+			rgs.logger.Println("repository already exists")
+			if err := rgs.open(); err != nil {
+				return err
+			}
+			if err := rgs.fetch(); err != nil {
+				return err
+			}
+		default:
+			rgs.logger.Printf("could not clone repository: %v\n", err)
+			return fmt.Errorf(gitInitErrFmt, err)
+		}
 	}
 	rgs.cloned = true
 	rgs.logger.Println("retrieving work tree for git repo")
