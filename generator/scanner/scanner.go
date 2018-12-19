@@ -43,7 +43,7 @@ type Bundle struct {
 // Scan will take a directory and recursively scan for proto files
 func (s *Scanner) Scan(dict string) []Bundle {
 	files := []string{}
-	s.logger.Printf("scanner scanning: %q\n", dict)
+	s.logger.Printf("scanner scanning dictionary: %q\n", dict)
 	filepath.Walk(dict, func(path string, f os.FileInfo, err error) error {
 		if path != dict {
 			if strings.HasSuffix(path, protoFileSuffix) {
@@ -91,24 +91,28 @@ func (s *Scanner) extractFile(path string) (ex extraction, err error) {
 	}
 	defer file.Close()
 
+	s.logger.Printf("scanner scanning file: %q\n", path)
 	scnr := bufio.NewScanner(file)
 	for scnr.Scan() {
 		if strings.HasPrefix(scnr.Text(), "import") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, "\";")
 			txt = strings.TrimPrefix(txt, "import \"")
+			s.logger.Printf("scanner found import in file %q: %s\n", file.Name(), txt)
 			ex.imports = append(ex.imports, txt)
 		}
 		if strings.HasPrefix(scnr.Text(), "option go_package") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, "\";")
 			txt = strings.TrimPrefix(txt, "option go_package = \"")
+			s.logger.Printf("scanner found go_package in file %q: %s\n", file.Name(), txt)
 			ex.goPkg = txt
 		}
 		if strings.HasPrefix(scnr.Text(), "package") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, ";")
 			txt = strings.TrimPrefix(txt, "package ")
+			s.logger.Printf("scanner found package in file %q: %s\n", file.Name(), txt)
 			ex.pkg = txt
 		}
 	}
