@@ -36,7 +36,7 @@ func (r *Runner) generate(cc *cli.Context) error {
 		Verbose: r.verbose,
 	}
 	if err := generator.Generate(r.logger(), cfg); err != nil {
-		fmt.Printf("Cannot generate code: %v\n", r.protogenFile)
+		fmt.Printf("Cannot generate code: %v\n", err)
 		return err
 	}
 	return nil
