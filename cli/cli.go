@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/zeeraw/protogen/source"
+
 	"github.com/urfave/cli"
 )
 
@@ -34,6 +36,7 @@ var (
 type Runner struct {
 	protogenFile string
 	verbose      bool
+	workDir      string
 	lang         *string
 	source       *string
 }
@@ -66,8 +69,13 @@ func Run(args []string) error {
 	}
 	app.Flags = []cli.Flag{
 		runner.flagVerbose(),
+		runner.flagWorkDir(),
 	}
 	app.Copyright = "Philip V. (Zee) – Apache 2.0"
-
+	app.Before = func(ctx *cli.Context) error {
+		// Set the workdir singleton of the source package
+		source.WorkDir = runner.workDir
+		return nil
+	}
 	return app.Run(args)
 }

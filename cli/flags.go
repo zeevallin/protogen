@@ -12,6 +12,16 @@ func (r *Runner) flagVerbose() cli.Flag {
 	}
 }
 
+func (r *Runner) flagWorkDir() cli.Flag {
+	return &cli.StringFlag{
+		Name:        "work_dir",
+		Usage:       "the path on disk where protogen operates and saves its cache",
+		Destination: &r.workDir,
+		Value:       DefaultWorkDir,
+		EnvVar:      "PROTOGEN_WORKDIR",
+	}
+}
+
 func (r *Runner) flagProtogenFile() cli.Flag {
 	return &cli.StringFlag{
 		Name:        "protogen_file",
