@@ -59,7 +59,7 @@ $ cd $GOPATH/src/github.com/zeeraw/protogen
 We currently have a [**workboard for minimum viable product**](https://github.com/zeeraw/protogen/projects/1) where we have all the bugs, optimisations and features we want before making a first release. Go have a look and see if there's something there you would be able to do.
 
 ### Installing dependencies
-You need to have the [**protoc**](https://github.com/protocolbuffers/protobuf) tool installed on your computer, without it protogen will not work. If you got the protogen binary in your path, you can always run `protogen check` to see if all the dependencies are available.
+You need to have the [**protoc**](https://github.com/protocolbuffers/protobuf) tool installed on your computer, without it protogen will not work. If you got the protogen binary in your path, you can always run `protogen info` to see if all the dependencies are available.
 
 After that you can run the install command and wait for it to complete. After that you should be all set to start adding your cool features or clear documentation to protogen.
 
