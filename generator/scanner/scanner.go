@@ -18,6 +18,7 @@ type Scanner struct {
 	GoPkgs map[string][]string
 	Pkgs   map[string][]string
 
+	dict    string
 	files   map[string]struct{}
 	scanned map[string]struct{}
 	logger  *log.Logger
@@ -43,6 +44,7 @@ type Bundle struct {
 // Scan will take a directory and recursively scan for proto files
 func (s *Scanner) Scan(dict string) []Bundle {
 	files := []string{}
+	s.dict = dict
 	s.logger.Printf("scanner scanning dictionary: %q\n", dict)
 	filepath.Walk(dict, func(path string, f os.FileInfo, err error) error {
 		if path != dict {
@@ -81,6 +83,7 @@ type extraction struct {
 }
 
 func (s *Scanner) extractFile(path string) (ex extraction, err error) {
+	s.logger.Printf("scanner extracting from file: %q\n", strings.TrimPrefix(path, s.dict))
 	ex = extraction{
 		imports: make([]string, 0),
 	}
@@ -91,28 +94,27 @@ func (s *Scanner) extractFile(path string) (ex extraction, err error) {
 	}
 	defer file.Close()
 
-	s.logger.Printf("scanner scanning file: %q\n", path)
 	scnr := bufio.NewScanner(file)
 	for scnr.Scan() {
 		if strings.HasPrefix(scnr.Text(), "import") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, "\";")
 			txt = strings.TrimPrefix(txt, "import \"")
-			s.logger.Printf("scanner found import in file %q: %s\n", file.Name(), txt)
+			s.logger.Printf("scanner extracting \"import\" in file %q: %s\n", strings.TrimPrefix(path, s.dict), txt)
 			ex.imports = append(ex.imports, txt)
 		}
 		if strings.HasPrefix(scnr.Text(), "option go_package") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, "\";")
 			txt = strings.TrimPrefix(txt, "option go_package = \"")
-			s.logger.Printf("scanner found go_package in file %q: %s\n", file.Name(), txt)
+			s.logger.Printf("scanner extracting \"go_package\" in file %q: %s\n", strings.TrimPrefix(path, s.dict), txt)
 			ex.goPkg = txt
 		}
 		if strings.HasPrefix(scnr.Text(), "package") {
 			txt := scnr.Text()
 			txt = strings.TrimSuffix(txt, ";")
 			txt = strings.TrimPrefix(txt, "package ")
-			s.logger.Printf("scanner found package in file %q: %s\n", file.Name(), txt)
+			s.logger.Printf("scanner extracting \"package\" in file %q: %s\n", strings.TrimPrefix(path, s.dict), txt)
 			ex.pkg = txt
 		}
 	}
