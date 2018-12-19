@@ -38,7 +38,7 @@ func (e ErrPluginNotAllowed) Error() string {
 
 // IsAllowedPlugin returns true if the plugin is allowed
 func IsAllowedPlugin(plugin Plugin) error {
-	if _, ok := AllowedPlugins[plugin]; ok {
+	if _, ok := AllowedPlugins[plugin]; !ok {
 		return ErrPluginNotAllowed{plugin}
 	}
 	return nil
@@ -64,7 +64,7 @@ func (e ErrPathNotAllowed) Error() string {
 
 // IsAllowedPath returns true if the type of pathing is allowed
 func IsAllowedPath(path Path) error {
-	if _, ok := AllowedPaths[path]; ok {
+	if _, ok := AllowedPaths[path]; !ok {
 		return ErrPathNotAllowed{path}
 	}
 	return nil
