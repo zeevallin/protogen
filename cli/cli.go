@@ -62,7 +62,6 @@ func Run(args []string) error {
 		runner.cmdGenerate(),
 		runner.cmdInit(),
 		runner.cmdInfo(),
-		runner.cmdAuthors(),
 		runner.cmdVersion(),
 	}
 	app.Flags = []cli.Flag{

@@ -16,11 +16,22 @@ const (
 	fmtExtBin          = "protoc-gen-%s"
 	fmtCheckBin        = "%s\t %s\n"
 	fmtCheckBinVersion = "%s\t %s\t (%s)\n"
+	fmtAuthor          = "%s\t %s\n"
 )
 
 var languages = []config.Language{
 	config.Go,
 }
+
+var (
+	authorPhilipV = cli.Author{
+		Name:  "Philip V. (Zee)",
+		Email: "zee@vall.in",
+	}
+	authors = []cli.Author{
+		authorPhilipV,
+	}
+)
 
 func (r *Runner) cmdInfo() cli.Command {
 	const usage = "shows information about protogen and its dependencies"
@@ -53,6 +64,13 @@ func (r *Runner) info(cc *cli.Context) error {
 			fmt.Fprintf(w, fmtCheckBin, extBin, checkMark)
 		}
 
+	}
+	w.Flush()
+
+	fmt.Printf("\nAuthors\n")
+	w = tabwriter.NewWriter(os.Stdout, 0, 0, 0, ' ', 0)
+	for _, author := range authors {
+		fmt.Fprintf(w, fmtAuthor, author.Name, author.Email)
 	}
 	w.Flush()
 
