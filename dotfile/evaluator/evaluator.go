@@ -97,9 +97,12 @@ func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (in
 		}
 		return golang.Config{}, nil
 	default:
-		err := ErrLanguageNotSupported{lang}
-		e.logger.Printf("cannot evaluate unsupported: %v\n", err)
-		return nil, err
+		if stmt.Block != nil {
+			err := ErrLanguageNotSupported{lang}
+			e.logger.Printf("cannot evaluate unsupported: %v\n", err)
+			return nil, err
+		}
+		return nil, nil
 	}
 }
 

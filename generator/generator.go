@@ -77,6 +77,16 @@ func (g *Generator) Run() error {
 			}
 		}
 	default:
+		g.logger.Printf("generator scanned %d packages\n", len(scanner.Pkgs))
+		for pkg, files := range scanner.Pkgs {
+			for _, f := range files {
+				name := strings.TrimPrefix(f, g.pkg.Source.PathTo(g.pkg.Name))
+				g.logger.Printf("generating %s for package \"%s\" into %s", name, pkg, g.pkg.Output)
+			}
+			if err := p.Run(g.pkg, files...); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

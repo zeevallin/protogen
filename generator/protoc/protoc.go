@@ -44,8 +44,9 @@ func (p *Protoc) Run(pkg *config.Package, files ...string) error {
 	switch pkg.Language {
 	case config.Go:
 		return p.RunGo(pkg, files...)
+	default:
+		return p.RunGeneric(pkg, files...)
 	}
-	return ErrUnknownLanguage{pkg.Language}
 }
 
 // Exec will run commands against the protoc binary

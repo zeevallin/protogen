@@ -28,8 +28,8 @@ the relevant files on every release tag you've specified in your
 func (r *Runner) generate(cc *cli.Context) error {
 	cfg, err := ReadConfigFromFilePath(r.logger(), r.protogenFile)
 	if err != nil {
-		fmt.Printf("Cannot read protogen file %q\n", r.protogenFile)
 		r.logger().Println(err)
+		fmt.Printf("Cannot read protogen file %q: %v\n", r.protogenFile, err)
 		return err
 	}
 	cfg.General = &config.General{
