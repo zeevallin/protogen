@@ -12,3 +12,6 @@ before_install:
 
 script:
   - docker run -v $(pwd):/go/src/github.com/zeeraw/protogen --rm protogen-environment:latest make all 
+
+git:
+  submodules_depth: 10
