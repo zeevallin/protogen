@@ -70,8 +70,16 @@ func (e *Evaluator) evalStatements(stmts []ast.Statement) error {
 }
 
 func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) (source.Source, error) {
-	e.logger.Printf("evaluating source statement: %s\n", stmt.Source.String())
-	return source.NewRemoteGitSource(stmt.Source.String())
+	src := stmt.Source.String()
+	e.logger.Printf("evaluating source statement: %s\n", src)
+	if isFilePath(src) {
+		return source.NewLocalGitSource(src)
+	}
+	return source.NewRemoteGitSource(src)
+}
+
+func isFilePath(s string) bool {
+	return strings.HasPrefix(s, "./") || strings.HasPrefix(s, "~/") || strings.HasPrefix(s, "/")
 }
 
 func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.Language {
