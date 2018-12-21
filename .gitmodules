@@ -1,0 +1,3 @@
+[submodule "source/fixtures"]
+	path = source/fixtures
+	url = git@github.com:zeeraw/protogen-protos.git
