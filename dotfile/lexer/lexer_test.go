@@ -1,8 +1,6 @@
 package lexer_test
 
 import (
-	"io/ioutil"
-	"log"
 	"testing"
 
 	"github.com/zeeraw/protogen/dotfile/lexer"
@@ -43,7 +41,7 @@ func TestNextToken(t *testing.T) {
 		{token.ILLEGAL, ")"},
 		{token.EOF, ""},
 	}
-	l := lexer.New(log.New(ioutil.Discard, "", 0), []byte(input))
+	l := lexer.New([]byte(input))
 
 	for i, tt := range tests {
 		tok := l.NextToken()

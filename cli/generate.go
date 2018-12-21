@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/urfave/cli"
 	"github.com/zeeraw/protogen/config"
@@ -26,16 +27,16 @@ the relevant files on every release tag you've specified in your
 }
 
 func (r *Runner) generate(cc *cli.Context) error {
-	cfg, err := ReadConfigFromFilePath(r.logger(), r.protogenFile)
+	cfg, err := ReadConfigFromFilePath(r.protogenFile)
 	if err != nil {
-		r.logger().Println(err)
+		log.Println(err)
 		fmt.Printf("Cannot read protogen file %q: %v\n", r.protogenFile, err)
 		return err
 	}
 	cfg.General = &config.General{
 		Verbose: r.verbose,
 	}
-	if err := generator.Generate(r.logger(), cfg); err != nil {
+	if err := generator.Generate(cfg); err != nil {
 		fmt.Printf("Cannot generate code: %v\n", err)
 		return err
 	}

@@ -3,8 +3,6 @@
 package protoc_test
 
 import (
-	"io/ioutil"
-	"log"
 	"os"
 	"testing"
 
@@ -16,19 +14,17 @@ import (
 )
 
 var (
-	logger *log.Logger
-	p      *protoc.Protoc
-	src    source.Source
+	p   *protoc.Protoc
+	src source.Source
 )
 
 func TestMain(m *testing.M) {
-	logger = log.New(ioutil.Discard, "test", 0)
 
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	p = protoc.NewProtoc(logger)
+	p = protoc.NewProtoc()
 	p.WorkingDirectory = wd
 
 	src = source.NewMockGitSource("./")

@@ -12,10 +12,9 @@ import (
 )
 
 // New returns a new evaluation instance
-func New(logger *log.Logger) *Evaluator {
+func New() *Evaluator {
 	return &Evaluator{
 		Packages: make([]*config.Package, 0),
-		logger:   logger,
 	}
 }
 
@@ -26,7 +25,6 @@ type Evaluator struct {
 	CurrentLanguageConfig interface{}
 	CurrentSource         source.Source
 	CurrentOutput         string
-	logger                *log.Logger
 }
 
 // Eval evaluates a configuration file AST
@@ -71,7 +69,7 @@ func (e *Evaluator) evalStatements(stmts []ast.Statement) error {
 
 func (e *Evaluator) evalSourceStatement(stmt *ast.SourceStatement) (source.Source, error) {
 	src := stmt.Source.String()
-	e.logger.Printf("evaluating source statement: %s\n", src)
+	log.Printf("evaluating source statement: %s\n", src)
 	if isFilePath(src) {
 		return source.NewLocalGitSource(src)
 	}
@@ -83,12 +81,12 @@ func isFilePath(s string) bool {
 }
 
 func (e *Evaluator) evalLanguageStatement(stmt *ast.LanguageStatement) config.Language {
-	e.logger.Printf("evaluating language statement: %s\n", stmt.Name.String())
+	log.Printf("evaluating language statement: %s\n", stmt.Name.String())
 	return config.Language(stmt.Name.String())
 }
 
 func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (interface{}, error) {
-	e.logger.Printf("evaluating language config: %s\n", stmt.Name.String())
+	log.Printf("evaluating language config: %s\n", stmt.Name.String())
 	lang := config.Language(stmt.Name.String())
 	switch lang {
 	case config.Go:
@@ -99,7 +97,7 @@ func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (in
 	default:
 		if stmt.Block != nil {
 			err := ErrLanguageNotSupported{lang}
-			e.logger.Printf("cannot evaluate unsupported: %v\n", err)
+			log.Printf("cannot evaluate unsupported: %v\n", err)
 			return nil, err
 		}
 		return nil, nil
@@ -107,7 +105,7 @@ func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (in
 }
 
 func (e *Evaluator) evalOutputStatement(stmt *ast.OutputStatement) string {
-	e.logger.Printf("evaluating output statement: %s\n", stmt.Path.String())
+	log.Printf("evaluating output statement: %s\n", stmt.Path.String())
 	return stmt.Path.String()
 }
 
@@ -128,7 +126,7 @@ func (e *Evaluator) evalGenerateStatement(stmt *ast.GenerateStatement) *config.P
 		}
 	}
 
-	e.logger.Printf("evaluating generate statement: %q %T(%s)\n", stmt.Target.String(), ref.Type, ref.Name)
+	log.Printf("evaluating generate statement: %q %T(%s)\n", stmt.Target.String(), ref.Type, ref.Name)
 
 	return &config.Package{
 		Source:         e.CurrentSource,

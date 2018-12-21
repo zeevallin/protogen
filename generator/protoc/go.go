@@ -2,6 +2,7 @@ package protoc
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/zeeraw/protogen/config"
@@ -12,7 +13,7 @@ const goFlag = "--go_out"
 
 // RunGo will run generation of a package with Go code as the output
 func (p *Protoc) RunGo(pkg *config.Package, files ...string) error {
-	p.logger.Println("protoc running go")
+	log.Println("protoc running go")
 	args, err := p.BuildGo(pkg, files...)
 	if err != nil {
 		return err
@@ -22,7 +23,7 @@ func (p *Protoc) RunGo(pkg *config.Package, files ...string) error {
 
 // BuildGo will construct the protoc command for a package with Go code as the output
 func (p *Protoc) BuildGo(pkg *config.Package, files ...string) ([]string, error) {
-	p.logger.Println("protoc building go")
+	log.Println("protoc building go")
 	cfg, ok := pkg.LanguageConfig.(golang.Config)
 	if !ok {
 		return nil, ErrConfigType{pkg.LanguageConfig}

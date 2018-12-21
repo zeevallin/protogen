@@ -11,22 +11,22 @@ import (
 )
 
 // ReadConfigFromFilePath will attempt to read a .protogen configuration file at the given path
-func ReadConfigFromFilePath(logger *log.Logger, path string) (*config.Config, error) {
-	logger.Printf("reading file at %s\n", path)
+func ReadConfigFromFilePath(path string) (*config.Config, error) {
+	log.Printf("reading file at %s\n", path)
 	f, err := ioutil.ReadFile(path)
 	if err != nil {
-		logger.Printf("cannot read file: %s\n", err)
+		log.Printf("cannot read file: %s\n", err)
 		return nil, err
 	}
-	l := lexer.New(logger, f)
-	p := parser.New(logger, l)
+	l := lexer.New(f)
+	p := parser.New(l)
 
 	cfg, err := p.Parse()
 	if err != nil {
-		logger.Printf("cannot parse file: %s\n", err)
+		log.Printf("cannot parse file: %s\n", err)
 		return nil, err
 	}
 
-	e := evaluator.New(logger)
+	e := evaluator.New()
 	return e.Eval(cfg)
 }

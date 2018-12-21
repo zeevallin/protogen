@@ -49,7 +49,7 @@ func (r *Runner) info(cc *cli.Context) error {
 	fmt.Printf("Dependencies\n")
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 0, ' ', 0)
 
-	p := protoc.NewProtoc(r.logger())
+	p := protoc.NewProtoc()
 	version, err := p.Check()
 	if err != nil {
 		fmt.Fprintf(w, fmtCheckBin, p.Binary, crossMark)

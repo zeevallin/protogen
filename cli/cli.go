@@ -41,16 +41,6 @@ type Runner struct {
 	source       *string
 }
 
-func (r *Runner) logger() *log.Logger {
-	var logdest io.Writer
-	if r.verbose {
-		logdest = os.Stdout
-	} else {
-		logdest = ioutil.Discard
-	}
-	return log.New(logdest, loggerTag, log.Lshortfile|log.LstdFlags)
-}
-
 // Run will
 func Run(args []string) error {
 	runner := &Runner{}
@@ -73,6 +63,17 @@ func Run(args []string) error {
 	}
 	app.Copyright = "Philip V. (Zee) – Apache 2.0"
 	app.Before = func(ctx *cli.Context) error {
+		// Setup the logger
+		var logdest io.Writer
+		if runner.verbose {
+			logdest = os.Stdout
+		} else {
+			logdest = ioutil.Discard
+		}
+		log.SetOutput(logdest)
+		log.SetFlags(log.Lshortfile | log.LstdFlags)
+		log.SetPrefix(loggerTag)
+
 		// Set the workdir singleton of the source package
 		source.WorkDir = runner.workDir
 		return nil

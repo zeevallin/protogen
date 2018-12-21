@@ -1,8 +1,6 @@
 package evaluator_test
 
 import (
-	"io/ioutil"
-	"log"
 	"testing"
 
 	"github.com/zeeraw/protogen/dotfile/ast"
@@ -12,10 +10,9 @@ import (
 )
 
 func TestEval(t *testing.T) {
-	var logger = log.New(ioutil.Discard, "", 0)
 	t.Run("when everything is alright", func(tt *testing.T) {
 		tree := new()
-		e := evaluator.New(logger)
+		e := evaluator.New()
 		conf, err := e.Eval(tree)
 		test.AssertEqual(t, nil, err)
 		test.AssertEqual(t, 2, len(conf.Packages))
@@ -53,7 +50,7 @@ func TestEval(t *testing.T) {
 			},
 		}
 
-		e := evaluator.New(logger)
+		e := evaluator.New()
 		_, err := e.Eval(tree)
 		if err == nil {
 			t.Errorf("expected there to be an error")

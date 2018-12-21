@@ -1,8 +1,6 @@
 package parser_test
 
 import (
-	"io/ioutil"
-	"log"
 	"testing"
 
 	"github.com/zeeraw/protogen/test"
@@ -13,9 +11,8 @@ import (
 )
 
 func newParser(input string) *parser.Parser {
-	logger := log.New(ioutil.Discard, "", 0)
-	l := lexer.New(logger, []byte(input))
-	return parser.New(logger, l)
+	l := lexer.New([]byte(input))
+	return parser.New(l)
 }
 
 func TestParseConfigurationFile(t *testing.T) {
