@@ -21,6 +21,7 @@ const (
 
 var languages = []config.Language{
 	config.Go,
+	config.Swift,
 }
 
 var (
@@ -55,15 +56,19 @@ func (r *Runner) info(cc *cli.Context) error {
 	} else {
 		fmt.Fprintf(w, fmtCheckBinVersion, p.Binary, checkMark, version)
 	}
+
 	for _, lang := range languages {
 		extBin := fmt.Sprintf(fmtExtBin, lang)
-		err := p.CheckExtension(lang)
+		version, err := p.CheckExtension(lang)
 		if err != nil {
 			fmt.Fprintf(w, fmtCheckBin, extBin, crossMark)
-		} else {
-			fmt.Fprintf(w, fmtCheckBin, extBin, checkMark)
+			continue
 		}
-
+		if version == "" {
+			fmt.Fprintf(w, fmtCheckBin, extBin, checkMark)
+			continue
+		}
+		fmt.Fprintf(w, fmtCheckBinVersion, extBin, checkMark, version)
 	}
 	w.Flush()
 

@@ -81,26 +81,29 @@ func (p *Protoc) Check() (string, error) {
 	if err != nil {
 		return "", ErrProtocMissing{err}
 	}
-
-	trimmed := strings.TrimSpace(string(out))
-	tuple := strings.Split(trimmed, " ")
-	return tuple[1], nil
+	return deriveVersion(string(out)), nil
 }
 
 // CheckExtension will look and see if an extension binary is installed
-func (p *Protoc) CheckExtension(lang config.Language) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
+func (p *Protoc) CheckExtension(lang config.Language) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	binary := fmt.Sprintf("protoc-gen-%s", lang)
-	err := exec.CommandContext(ctx, binary).Run()
+	out, err := exec.CommandContext(ctx, binary, versionFlag).Output()
 	if err != nil {
 		switch err.(type) {
 		case *exec.ExitError: // ExitError should trigger when the context timeouts
-			return nil
+			return "", nil
 		default:
-			return ErrExtensionMissing{lang, err}
+			return "", ErrExtensionMissing{lang, err}
 		}
 	}
-	return nil
+	return deriveVersion(string(out)), nil
+}
+
+func deriveVersion(s string) string {
+	trimmed := strings.TrimSpace(string(s))
+	tuple := strings.Split(trimmed, " ")
+	return tuple[1]
 }
