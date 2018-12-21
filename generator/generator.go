@@ -54,12 +54,14 @@ func (g *Generator) Run() error {
 	p.WorkingDirectory = wd
 
 	g.logger.Printf("generator preparing package\n")
-	if err := g.pkg.Prepare(); err != nil {
+	clean, err := g.pkg.Prepare()
+	defer clean()
+	if err != nil {
 		return err
 	}
 
 	g.logger.Printf("generator scanning\n")
-	scanner := scanner.New(g.logger, g.pkg.Source.RootPath())
+	scanner := scanner.New(g.logger, g.pkg.Root())
 	scanner.Scan(g.pkg.Path())
 
 	switch g.pkg.Language {

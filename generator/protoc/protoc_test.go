@@ -31,7 +31,7 @@ func TestMain(m *testing.M) {
 	p = protoc.NewProtoc(logger)
 	p.WorkingDirectory = wd
 
-	src, err = source.NewMockSource(logger, "./")
+	src = source.NewMockGitSource("./")
 	if err != nil {
 		panic(err)
 	}

@@ -15,7 +15,7 @@ func ConfigTest(t *testing.T) {
 				{
 					Name:     "master",
 					Language: "go",
-					Source:   &source.RemoteGitSource{},
+					Source:   source.NewMockGitSource(""),
 					Ref:      source.Ref{},
 				},
 			},

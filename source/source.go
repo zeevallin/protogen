@@ -5,12 +5,15 @@ var (
 	WorkDir string
 )
 
-// Source defines behaviour of the interaction with a proto repository
+// Source defines behaviour for a source
 type Source interface {
-	Init() error
+	Root() string
 	PathTo(pkg string) string
-	RootPath() string
+	InitRepo() (Repo, error)
+}
 
-	Checkout(hash string) error
-	HashForRef(ref Ref) (string, error)
+// Repo defines behaviour for a git repository
+type Repo interface {
+	Clean() error
+	Checkout(ref Ref) error
 }

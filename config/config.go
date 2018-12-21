@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	errFmt = "could not prepare package: %v"
+	fmtErrPrepare = "could not prepare package: %v"
+	fmtErrClean   = "could not clean package: %v"
 )
 
 // Config defines the configuration for code generation
@@ -42,25 +43,36 @@ type Package struct {
 	Ref source.Ref
 }
 
-// Prepare the correct source by prepare out the branch
-func (p *Package) Prepare() error {
-	err := p.Source.Init()
-	if err != nil {
-		return fmt.Errorf(errFmt, err)
-	}
+// CleanFunc is a type that represents a cleanup fucntion
+type CleanFunc func() error
 
-	hash, err := p.Source.HashForRef(p.Ref)
-	if err != nil {
-		return fmt.Errorf(errFmt, err)
+// Prepare the correct source by prepare out the branch
+func (p *Package) Prepare() (CleanFunc, error) {
+	clean := func() error {
+		return nil
 	}
-	err = p.Source.Checkout(hash)
+	repo, err := p.Source.InitRepo()
 	if err != nil {
-		return fmt.Errorf(errFmt, err)
+		return clean, fmt.Errorf(fmtErrPrepare, err)
 	}
-	return nil
+	clean = func() error {
+		if err := repo.Clean(); err != nil {
+			return fmt.Errorf(fmtErrClean, err)
+		}
+		return nil
+	}
+	if err := repo.Checkout(p.Ref); err != nil {
+		return clean, fmt.Errorf(fmtErrPrepare, err)
+	}
+	return clean, nil
 }
 
 // Path returns the absolute path to the package
 func (p *Package) Path() string {
 	return p.Source.PathTo(p.Name)
+}
+
+// Root returns the absolute path to the package import root
+func (p *Package) Root() string {
+	return p.Source.Root()
 }
