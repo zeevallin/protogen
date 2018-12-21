@@ -11,6 +11,9 @@ import (
 // RunGeneric will run generation of a package in a generic way
 func (p *Protoc) RunGeneric(pkg *config.Package, files ...string) error {
 	log.Printf("protoc running generic for %q\n", pkg.Language)
+	if _, err := p.CheckExtension(pkg.Language); err != nil {
+		return err
+	}
 	args, err := p.BuildGeneric(pkg, files...)
 	if err != nil {
 		return err
