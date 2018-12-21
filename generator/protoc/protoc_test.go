@@ -48,12 +48,12 @@ func TestProtoc_Check(t *testing.T) {
 }
 func TestProtoc_CheckExtension(t *testing.T) {
 	t.Run("when the extension is installed", func(t *testing.T) {
-		err := p.CheckExtension(config.Go)
+		_, err := p.CheckExtension(config.Go)
 		test.AssertEqual(t, nil, err)
 	})
 	t.Run("when the extension is not installed", func(t *testing.T) {
 		lang := config.Language("mumbojumbo")
-		err := p.CheckExtension(lang)
+		_, err := p.CheckExtension(lang)
 		if err != nil {
 			switch err.(type) {
 			case protoc.ErrExtensionMissing:
