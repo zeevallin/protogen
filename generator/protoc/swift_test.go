@@ -1,4 +1,5 @@
 // +build integration
+// +build darwin
 
 package protoc_test
 
