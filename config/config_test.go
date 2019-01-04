@@ -8,9 +8,12 @@ import (
 	"github.com/zeeraw/protogen/source"
 )
 
-func ConfigTest(t *testing.T) {
+func TestConfig(t *testing.T) {
 	t.Run("can create", func(tt *testing.T) {
 		cfg := config.Config{
+			General: &config.General{
+				Verbose: false,
+			},
 			Packages: []*config.Package{
 				{
 					Name:     "master",
