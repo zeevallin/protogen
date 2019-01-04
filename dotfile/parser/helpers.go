@@ -9,10 +9,7 @@ func (p *Parser) skipWhitespaceUntilAny(ts ...token.Type) bool {
 	for p.curTokenIs(token.WHITESPACE) {
 		p.Next()
 	}
-	if !p.expectAny(ts...) {
-		return false
-	}
-	return true
+	return p.expectAny(ts...)
 }
 
 func (p *Parser) skipWhitespaceUntil(t token.Type) bool {
@@ -22,10 +19,7 @@ func (p *Parser) skipWhitespaceUntil(t token.Type) bool {
 	for p.curTokenIs(token.WHITESPACE) {
 		p.Next()
 	}
-	if !p.expect(t) {
-		return false
-	}
-	return true
+	return p.expect(t)
 }
 
 func (p *Parser) curTokenIs(t token.Type) bool {
