@@ -140,3 +140,18 @@ func (p *Parser) parsePluginStatement() ast.Statement {
 	stmt.Name = ast.NewIdentifier(p.Token())
 	return stmt
 }
+
+func (p *Parser) parseOptionStatement() ast.Statement {
+	stmt := &ast.OptionStatement{
+		Token: p.Token(),
+	}
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
+		return nil
+	}
+	stmt.Name = ast.NewIdentifier(p.Token())
+	if !p.skipWhitespaceUntil(token.IDENTIFIER) {
+		return nil
+	}
+	stmt.Value = ast.NewIdentifier(p.Token())
+	return stmt
+}

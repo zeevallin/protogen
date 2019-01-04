@@ -41,6 +41,9 @@ const (
 	// PATH defines the keyword for defining the import pathing for go code generation
 	PATH = "PATH"
 
+	// OPTION defines the keyword for specifying options for swift code generation
+	OPTION = "OPTION"
+
 	// Literals
 
 	// VERSION defines a version value
@@ -82,6 +85,9 @@ const (
 
 	// KWPath is the explicit keyword for a go import path
 	KWPath = "path"
+
+	// KWOption is the explicit keyword for a language option
+	KWOption = "option"
 )
 
 var (
@@ -93,6 +99,7 @@ var (
 		KWOutput:   OUTPUT,
 		KWPath:     PATH,
 		KWPlugin:   PLUGIN,
+		KWOption:   OPTION,
 	}
 )
 
