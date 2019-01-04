@@ -1,5 +1,6 @@
 GIT_COMMIT=$(shell git rev-list -1 HEAD)
 PROJECT_PATH=github.com/zeeraw/protogen
+DEFAULT_WORK_DIR=/usr/local/var/protogen
 
 prepare:
 
@@ -15,6 +16,7 @@ test: prepare
 build: prepare
 	@go build \
 	-o build/protogen \
+	-ldflags "-X $(PROJECT_PATH)/cli.DefaultWorkDir=$(DEFAULT_WORK_DIR)" \
 	-ldflags "-X $(PROJECT_PATH)/cli.GitCommit=$(GIT_COMMIT)"
 
 install:
