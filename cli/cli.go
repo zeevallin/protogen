@@ -27,11 +27,6 @@ const (
 	loggerTag = "protogen "
 )
 
-var (
-	// GitCommit is the git commit hash of the source-tree during build
-	GitCommit string
-)
-
 // Runner holds the configuration for the running context
 type Runner struct {
 	protogenFile string
