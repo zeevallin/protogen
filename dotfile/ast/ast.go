@@ -181,6 +181,19 @@ func (gps *PathStatement) String() string {
 	return fmt.Sprintf("%s %s", token.KWPath, gps.Type)
 }
 
+// OptionStatement is a statement for language options
+type OptionStatement struct {
+	Token token.Token // token.PATH
+	Name  Expression
+	Value Expression
+}
+
+// TokenLiteral returns the source statement token literal string
+func (os *OptionStatement) TokenLiteral() string { return os.Token.Literal }
+func (os *OptionStatement) String() string {
+	return fmt.Sprintf("%s %s %s", token.KWOption, os.Name, os.Value)
+}
+
 // Identifier describes a value in the configuration
 type Identifier struct {
 	Token token.Token // token.IDENTIFIER

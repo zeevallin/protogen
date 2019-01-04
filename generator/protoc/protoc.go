@@ -41,6 +41,8 @@ func (p *Protoc) Run(pkg *config.Package, files ...string) error {
 	switch pkg.Language {
 	case config.Go:
 		return p.RunGo(pkg, files...)
+	case config.Swift:
+		return p.RunSwift(pkg, files...)
 	default:
 		return p.RunGeneric(pkg, files...)
 	}

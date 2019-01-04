@@ -13,12 +13,15 @@ const (
 	testOutput = "./vendor/protos"
 	testLang   = "go"
 
-	testGoPlugin = "grpc"
+	testGoPlugin    = "grpc"
+	testOptionName  = "WithKey"
+	testOptionValue = "AndValue"
 )
 
 const expectedMinimallyViable = `source github.com/zeeraw/protogen-protos
 language go {
 	plugin grpc
+	option WithKey AndValue
 }
 output ./vendor/protos`
 
@@ -65,6 +68,26 @@ func TestConfigurationFile(t *testing.T) {
 										Type:    token.IDENTIFIER,
 									},
 									Value: testGoPlugin,
+								},
+							},
+							&ast.OptionStatement{
+								Token: token.Token{
+									Literal: token.KWOption,
+									Type:    token.OPTION,
+								},
+								Name: &ast.Identifier{
+									Token: token.Token{
+										Literal: testOptionName,
+										Type:    token.IDENTIFIER,
+									},
+									Value: testOptionName,
+								},
+								Value: &ast.Identifier{
+									Token: token.Token{
+										Literal: testOptionValue,
+										Type:    token.IDENTIFIER,
+									},
+									Value: testOptionValue,
 								},
 							},
 						},

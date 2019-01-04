@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/zeeraw/protogen/config/go"
+	"github.com/zeeraw/protogen/config/swift"
 
 	"github.com/zeeraw/protogen/config"
 	"github.com/zeeraw/protogen/dotfile/ast"
@@ -94,6 +95,13 @@ func (e *Evaluator) evalLanguageConfigStatement(stmt *ast.LanguageStatement) (in
 			return e.evalLanguageGoConfigBlock(stmt.Block)
 		}
 		return golang.Config{}, nil
+	case config.Swift:
+		{
+			if stmt.Block != nil {
+				return e.evalLanguageSwiftConfigBlock(stmt.Block)
+			}
+		}
+		return swift.Config{}, nil
 	default:
 		if stmt.Block != nil {
 			err := ErrLanguageNotSupported{lang}
